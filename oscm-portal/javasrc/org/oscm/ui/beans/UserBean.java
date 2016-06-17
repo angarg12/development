@@ -24,10 +24,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.CommunicationException;
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.oscm.internal.intf.ConfigurationService;
@@ -732,6 +729,7 @@ public class UserBean extends BaseBean implements Serializable {
      * @return OUTCOME_LOGIN.
      */
     public String logoff() {
+        handleDeleteCookies();
         HttpServletRequest request = invalidateSession();
 
         if (isMarketplaceSet(request)) {
@@ -739,6 +737,20 @@ public class UserBean extends BaseBean implements Serializable {
         }
 
         return OUTCOME_LOGIN;
+    }
+
+    private void handleDeleteCookies() {
+        final Cookie[] cookies = getRequest().getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equals("MSISAuth")) {
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0);
+                    getResponse().addCookie(cookie);
+                }
+            }
+        }
     }
 
     /**

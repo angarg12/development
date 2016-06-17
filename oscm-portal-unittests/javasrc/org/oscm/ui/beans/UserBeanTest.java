@@ -37,6 +37,7 @@ import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -790,6 +791,24 @@ public class UserBeanTest {
 
         // then
         assertEquals(SUBSCRIPTION_ADD_PAGE, userBean.getRequestedRedirect());
+    }
+
+    @Test
+    public void removingCookiesDuringLogoff() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        doReturn(request).when(userBean).getRequest();
+        doReturn("").when(request).getServletPath();
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        doReturn(response).when(userBean).getResponse();
+        Cookie[] cookies = new Cookie[2];
+        cookies[0] = new Cookie("dummy", "dummy");
+        cookies[1] = new Cookie("MSISAuth", "dummy");
+        doReturn(cookies).when(request).getCookies();
+
+
+        userBean.logoff();
+
+        verify(response, times(1)).addCookie(cookies[1]);
     }
 
     private ConfigurationService setupConfigurationMockForRegistrationenablement(
