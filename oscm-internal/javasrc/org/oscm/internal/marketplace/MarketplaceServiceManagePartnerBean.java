@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 06.08.2012                                                      
  *                                                                              
@@ -21,7 +21,6 @@ import org.oscm.i18nservice.local.LocalizerServiceLocal;
 import org.oscm.interceptor.ExceptionMapper;
 import org.oscm.interceptor.InvocationDateContainer;
 import org.oscm.internal.components.response.Response;
-import org.oscm.internal.intf.MarketplaceService;
 import org.oscm.internal.pricing.POMarketplacePriceModel;
 import org.oscm.internal.pricing.POPartnerPriceModel;
 import org.oscm.internal.pricing.PricingServiceBean;
@@ -55,9 +54,6 @@ public class MarketplaceServiceManagePartnerBean implements
     @EJB(beanInterface = MarketplaceServiceLocal.class)
     MarketplaceServiceLocal mpServiceLocal;
 
-    @EJB(beanInterface = MarketplaceService.class)
-    MarketplaceService mpService;
-
     @Override
     @RolesAllowed({ "MARKETPLACE_OWNER", "PLATFORM_OPERATOR" })
     public Response updateMarketplace(VOMarketplace marketplace,
@@ -88,7 +84,9 @@ public class MarketplaceServiceManagePartnerBean implements
             newMarketplace.setBrokerPriceModel(PricingServiceBean
                     .toRevenueShareModel(partnerPriceModel
                             .getRevenueShareBrokerModel()));
-
+            
+            mpServiceLocal.updateTenant(mp, marketplace.getTenantId());
+            
             boolean ownerAssignmentUpdated = mpServiceLocal
                     .updateMarketplace(mp, newMarketplace, marketplace
                             .getName(), marketplace.getOwningOrganizationId(),
@@ -97,7 +95,8 @@ public class MarketplaceServiceManagePartnerBean implements
                                     .getRevenueShareResellerModel()
                                     .getVersion(), partnerPriceModel
                                     .getRevenueShareBrokerModel().getVersion());
-
+            
+            
             // build the response
             LocalizerFacade facade = new LocalizerFacade(localizer, dm
                     .getCurrentUser().getLocale());
@@ -115,9 +114,6 @@ public class MarketplaceServiceManagePartnerBean implements
                         EmailType.MARKETPLACE_OWNER_ASSIGNED, mp, mp
                                 .getOrganization().getKey());
             }
-
-            mpService.clearCachedMarketplaceConfiguration(marketplace
-                    .getMarketplaceId());
 
             return response;
         } finally {

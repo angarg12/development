@@ -1,4 +1,4 @@
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
                              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
@@ -70,6 +70,13 @@
           context="#{newMarketplaceBean.model.owningOrganizationId}"
           defaultContext="false"/>
       </adm:panelGrid>
+
+      <h:panelGroup id="tenantSelection" rendered="#{not newMarketplaceBean.menuBean.applicationBean.internalAuthMode}">
+        <adm:outputStep value="#{msg['marketplace.create.selectTenant']}" />
+        <adm:panelGrid>
+          <adm:selectTenant context="#{newMarketplaceBean.model.tenantId}" bean="#{newMarketplaceBean}" />
+        </adm:panelGrid>
+      </h:panelGroup>
 
       <adm:buttonPanel>
         <adm:button id="saveButton" value="#{msg['button.save']}" bean="#{newMarketplaceBean}" buttonType="save"

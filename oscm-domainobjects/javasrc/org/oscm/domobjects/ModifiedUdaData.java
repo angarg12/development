@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 2013-12-5                                                      
  *                                                                              
@@ -37,6 +37,9 @@ public class ModifiedUdaData extends DomainDataContainer {
     @Column(nullable = false)
     private long subscriptionKey;
 
+    @Column(nullable = false)
+    private boolean encrypted;
+
     public long getTargetObjectKey() {
         return targetObjectKey;
     }
@@ -69,4 +72,11 @@ public class ModifiedUdaData extends DomainDataContainer {
         this.subscriptionKey = subscriptionKey;
     }
 
+    public boolean isEncrypted() {
+        return encrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
+    }
 }

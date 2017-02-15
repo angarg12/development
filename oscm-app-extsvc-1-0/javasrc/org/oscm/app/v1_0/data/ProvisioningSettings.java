@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Creation Date: 2012-08-06                                                    
  *                                                                              
@@ -188,11 +188,15 @@ public class ProvisioningSettings extends ControllerSettings implements
     }
 
     /**
-     * <p>If APP calls createInstance() of the controller, returns the user
-     * who requested the current provisioning operation.</p>
+     * <p>
+     * If APP calls createInstance() of the controller, returns the user who
+     * requested the current provisioning operation.
+     * </p>
      * 
-     * <p>If a timer calls the controller to switch from one status to the
-     * other, returns 'null'.</p>
+     * <p>
+     * If a timer calls the controller to switch from one status to the other,
+     * returns 'null'.
+     * </p>
      * 
      * @return the user or 'null'
      */

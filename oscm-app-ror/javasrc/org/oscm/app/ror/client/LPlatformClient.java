@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2012-11-08                                                      
  *                                                                              
@@ -21,7 +21,7 @@ import org.oscm.app.ror.data.LOperation;
 import org.oscm.app.ror.data.LParameter;
 import org.oscm.app.ror.data.LPlatformConfiguration;
 import org.oscm.app.ror.exceptions.RORException;
-import org.oscm.app.v1_0.exceptions.SuspendException;
+import org.oscm.app.v2_0.exceptions.SuspendException;
 
 public class LPlatformClient {
 

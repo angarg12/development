@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.auditlog;
@@ -18,6 +18,8 @@ public enum AuditLogParameter {
     CUSTOMER_NAME,
 
     DESCRIPTION,
+
+    CUSTOM_TAB_NAME,
 
     EVENT_NAME,
 

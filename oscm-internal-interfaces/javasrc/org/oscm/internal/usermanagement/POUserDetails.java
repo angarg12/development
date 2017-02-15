@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 03.09.2012                                                      
  *                                                                              
@@ -79,4 +79,5 @@ public class POUserDetails extends POUser {
     public UserAccountStatus getStatus() {
         return status;
     }
+
 }

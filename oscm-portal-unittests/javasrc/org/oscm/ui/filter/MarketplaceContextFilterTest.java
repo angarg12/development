@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: Peter Pock                                                      
  *                                                                              
@@ -673,11 +673,6 @@ public class MarketplaceContextFilterTest {
         verify(sessionMock, never()).invalidate();
         verify(mpCtxFilter, never()).forward(any(String.class),
                 any(HttpServletRequest.class), Matchers.eq(responseMock));
-    }
-
-    @Test
-    public void doFilter_GetServiceAccess() throws Exception {
-        new MarketplaceContextFilter().getMarketplaceService(sessionMock);
     }
 
     @Test

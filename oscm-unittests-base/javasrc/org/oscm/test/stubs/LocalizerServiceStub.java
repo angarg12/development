@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.test.stubs;
@@ -40,7 +40,7 @@ public class LocalizerServiceStub implements LocalizerServiceLocal {
     @Override
     public String getLocalizedTextFromDatabase(String localeString,
             long objectKey, LocalizedObjectTypes objectType) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override

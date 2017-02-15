@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 12.08.2012                                                      
  *                                                                              
@@ -59,7 +59,6 @@ public class MarketplaceServiceManagePartnerBeanTest {
     @Before
     public void setup() throws Exception {
         bean.mpServiceLocal = mock(MarketplaceServiceLocalBean.class);
-        bean.mpService = mock(MarketplaceServiceBean.class);
         marketplace = givenMarketplace();
         doReturn(marketplace).when(bean.mpServiceLocal).getMarketplace(
                 anyString());

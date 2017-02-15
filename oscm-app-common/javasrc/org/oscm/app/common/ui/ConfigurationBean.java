@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  AWS controller implementation for the 
  *  Asynchronous Provisioning Platform (APP)
@@ -19,27 +19,27 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.oscm.app.common.i18n.Messages;
 import org.oscm.app.common.intf.ControllerAccess;
-import org.oscm.app.v1_0.APPlatformServiceFactory;
-import org.oscm.app.v1_0.data.ControllerConfigurationKey;
-import org.oscm.app.v1_0.data.PasswordAuthentication;
-import org.oscm.app.v1_0.intf.APPlatformService;
+import org.oscm.app.v2_0.APPlatformServiceFactory;
+import org.oscm.app.v2_0.data.ControllerConfigurationKey;
+import org.oscm.app.v2_0.data.PasswordAuthentication;
+import org.oscm.app.v2_0.data.Setting;
+import org.oscm.app.v2_0.intf.APPlatformService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bean for reading and writing controller configuration settings.
  */
+@ManagedBean
 @SessionScoped
-@Named
 public class ConfigurationBean implements Serializable {
 
     private static final long serialVersionUID = -1300403486736808608L;
@@ -66,6 +66,7 @@ public class ConfigurationBean implements Serializable {
     // Reference to an APPlatformService instance
     private APPlatformService platformService;
 
+    @Inject
     private ControllerAccess controllerAccess;
 
     // The map with all configuration settings
@@ -138,7 +139,6 @@ public class ConfigurationBean implements Serializable {
         LOGGER.info("Initialize config bean");
     }
 
-    @Inject
     public void setControllerAccess(final ControllerAccess controllerAccess) {
         this.controllerAccess = controllerAccess;
     }
@@ -225,17 +225,19 @@ public class ConfigurationBean implements Serializable {
             this.locale = currentLocale.getLanguage();
 
             // Get all settings and map them to configuration items
-            HashMap<String, String> settings = platformService
+            HashMap<String, Setting> settings = platformService
                     .getControllerSettings(controllerAccess.getControllerId(),
                             new PasswordAuthentication(username, password));
-            items = new HashMap<String, ConfigurationItem>();
+            items = new HashMap<>();
             for (String key : settings.keySet()) {
                 // Add next item to local cache
-                addConfigurationItem(key, settings.get(key));
+                Setting setting = settings.get(key);
+                addConfigurationItem(key,
+                        setting != null ? setting.getValue() : null);
             }
 
             // Build groups which are displayed to the user
-            accessItems = new LinkedList<ConfigurationItem>();
+            accessItems = new LinkedList<>();
             List<String> core_ps = Arrays.asList(ACCESS_PARAMETERS);
             for (String key : core_ps) {
                 ConfigurationItem item = getConfigurationItem(key);
@@ -247,7 +249,7 @@ public class ConfigurationBean implements Serializable {
             }
 
             // Read controller settings
-            ctrlItems = new LinkedList<ConfigurationItem>();
+            ctrlItems = new LinkedList<>();
             for (String key : controllerAccess.getControllerParameterKeys()) {
                 ConfigurationItem item = getConfigurationItem(key);
                 ctrlItems.add(item);
@@ -316,8 +318,8 @@ public class ConfigurationBean implements Serializable {
      * Apply current locale to given configuration item
      */
     private void applyLocale(ConfigurationItem item) {
-        String tooltip = controllerAccess.getMessage(locale, MSG_TOOLTIP_PREFIX
-                + item.getKey(), new Object[0]);
+        String tooltip = controllerAccess.getMessage(locale,
+                MSG_TOOLTIP_PREFIX + item.getKey(), new Object[0]);
         if (tooltip != null && !tooltip.startsWith("!")) {
             item.setTooltip(tooltip);
         } else {
@@ -366,15 +368,16 @@ public class ConfigurationBean implements Serializable {
 
         try {
             // Collect all modified values
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, Setting> map = new HashMap<>();
             if (items != null) {
                 for (ConfigurationItem item : items.values()) {
                     if (item.isDirty()) {
-                        String value=item.getValue();
-                        if(value!=null){
-                            value=value.trim(); 
+                        String value = item.getValue();
+                        if (value != null) {
+                            value = value.trim();
                         }
-                        map.put(item.getKey(), value);
+                        map.put(item.getKey(),
+                                new Setting(item.getKey(), value));
                     }
                 }
             }
@@ -447,9 +450,8 @@ public class ConfigurationBean implements Serializable {
      * Sets an error status which will be displayed to the user
      */
     private void setErrorStatus(Throwable e) {
-        status = "*** "
-                + ((e.getMessage() != null) ? e.getMessage() : e.getClass()
-                        .getName());
+        status = "*** " + ((e.getMessage() != null) ? e.getMessage()
+                : e.getClass().getName());
         statusClass = STATUS_CLASS_ERROR;
     }
 

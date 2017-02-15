@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2009-06-29                                                      
  *                                                                              
@@ -43,6 +43,11 @@ public enum ParameterValueType {
     /**
      * The parameter values are selected from a given list of options.
      */
-    ENUMERATION;
+    ENUMERATION,
+
+    /**
+     * The parameter values are strings with hidden input field and encrypted data storage.
+     */
+    PWD
 
 }

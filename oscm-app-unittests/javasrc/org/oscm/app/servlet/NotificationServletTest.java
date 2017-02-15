@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 2015-3-26                                                   
  *                                                                              
@@ -17,9 +17,8 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import org.oscm.app.v1_0.service.APPConfigurationServiceBean;
-import org.oscm.app.v1_0.service.APPTimerServiceBean;
+import org.oscm.app.v2_0.service.APPConfigurationServiceBean;
+import org.oscm.app.v2_0.service.APPTimerServiceBean;
 
 public class NotificationServletTest {
     private NotificationServlet servlet;

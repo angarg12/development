@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: Mar 30, 2012                                                      
  *                                                                              
@@ -71,6 +71,7 @@ public class MarketplaceServiceBeanCRUDTest {
                 .createDefaultLandingpage();
         mpSrv.dm = mock(DataService.class);
         MarketplaceServiceLocalBean mpSrvL = spy(new MarketplaceServiceLocalBean());
+        mpSrvL.marketplaceCache = mock(MarketplaceCacheService.class);
         mpSrv.marketplaceServiceLocal = mpSrvL;
         DataService dml = mock(DataService.class);
         ((MarketplaceServiceLocalBean) mpSrv.marketplaceServiceLocal).ds = dml;

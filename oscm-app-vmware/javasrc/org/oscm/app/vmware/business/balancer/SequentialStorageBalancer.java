@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 2016-05-24
  *
@@ -8,7 +8,7 @@
 
 package org.oscm.app.vmware.business.balancer;
 
-import org.oscm.app.v1_0.exceptions.APPlatformException;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.oscm.app.vmware.business.VMPropertyHandler;
 import org.oscm.app.vmware.business.model.VMwareStorage;
 import org.oscm.app.vmware.i18n.Messages;
@@ -16,7 +16,7 @@ import org.oscm.app.vmware.i18n.Messages;
 /**
  * Implements a sequential storage balancer filling the storages in their
  * configured order.
- *
+ * 
  * @author soehnges
  */
 public class SequentialStorageBalancer extends StorageBalancer {

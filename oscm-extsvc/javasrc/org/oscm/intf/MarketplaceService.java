@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Creation Date: 2009-05-02                                                      
  *                                                                              
@@ -172,6 +172,16 @@ public interface MarketplaceService {
      */
     @WebMethod
     public List<VOMarketplace> getMarketplacesForOperator();
+
+    /**
+     * Returns a list of all marketplaces that can be accessed by the
+     * organization of the calling user.
+     * 
+     * @return a list of all marketplaces that can be accessed by the
+     *         organization of the calling user
+     */
+    @WebMethod
+    public List<VOMarketplace> getAccessibleMarketplaces();
 
     /**
      * Modifies the name and/or owner of the given marketplace.

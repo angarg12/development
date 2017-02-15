@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  OpenStack controller implementation for the 
  *  Asynchronous Provisioning Platform (APP)
@@ -49,6 +49,26 @@ public enum FlowState {
      * Deactivation of stack instance is in progress
      */
     DEACTIVATING,
+
+    /**
+     * The start of an application instance was requested.
+     */
+    START_REQUESTED,
+
+    /**
+     * Start of stack instance is in progress
+     */
+    STARTING,
+
+    /**
+     * The stop of an application instance was requested.
+     */
+    STOP_REQUESTED,
+
+    /**
+     * Stop of stack instance is in progress
+     */
+    STOPPING,
 
     /**
      * The application instance is currently being executed - waiting for OK

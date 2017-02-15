@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.test.stubs;
@@ -19,7 +19,6 @@ import org.oscm.internal.types.exception.OperationNotPermittedException;
 import org.oscm.internal.types.exception.OrganizationAlreadyBannedException;
 import org.oscm.internal.types.exception.OrganizationAlreadyExistsException;
 import org.oscm.internal.types.exception.OrganizationAuthorityException;
-import org.oscm.internal.types.exception.PublishingToMarketplaceNotPermittedException;
 import org.oscm.internal.types.exception.TechnicalServiceNotAliveException;
 import org.oscm.internal.types.exception.TechnicalServiceOperationException;
 import org.oscm.internal.types.exception.ValidationException;
@@ -46,8 +45,7 @@ public class MarketplaceServiceStub implements MarketplaceService {
     public VOServiceDetails publishService(VOService service,
             List<VOCatalogEntry> entries) throws ObjectNotFoundException,
             ValidationException, NonUniqueBusinessKeyException,
-            OperationNotPermittedException,
-            PublishingToMarketplaceNotPermittedException {
+            OperationNotPermittedException {
         throw new UnsupportedOperationException();
 
     }
@@ -69,7 +67,7 @@ public class MarketplaceServiceStub implements MarketplaceService {
     }
 
     @Override
-    public List<VOMarketplace> getAccessibleMarketplacesForOperator() {
+    public List<VOMarketplace> getAccessibleMarketplaces() {
         throw new UnsupportedOperationException();
     }
 
@@ -217,6 +215,30 @@ public class MarketplaceServiceStub implements MarketplaceService {
 
     @Override
     public void clearCachedMarketplaceConfiguration(String marketplaceId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<VOMarketplace> getAllMarketplacesForTenant(Long tenantKey)
+            throws ObjectNotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getTenantIdFromMarketplace(String marketplaceId)
+            throws ObjectNotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<VOOrganization> getSuppliersForMarketplace(String marketplaceId)
+            throws ObjectNotFoundException, OperationNotPermittedException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getMarketplaceIdForKey(Long key)
+            throws ObjectNotFoundException {
         throw new UnsupportedOperationException();
     }
 

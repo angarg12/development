@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.intf;
@@ -282,11 +282,6 @@ public class ParameterNamesTest {
     @Test
     public void testTagService() throws Exception {
         assertParameterNames(TagService.class);
-    }
-
-    @Test
-    public void testSamlService() throws Exception {
-        assertParameterNames(SamlService.class);
     }
 
     @Test

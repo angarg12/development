@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: Jun 01, 2016
  *
@@ -9,6 +9,7 @@
 package org.oscm.ui.filter;
 
 import static org.oscm.ui.beans.BaseBean.ERROR_PAGE;
+import static org.oscm.ui.common.Constants.PORTAL_HAS_BEEN_REQUESTED;
 
 import java.io.IOException;
 
@@ -45,6 +46,8 @@ public class ClosedMarketplaceFilter extends BaseBesFilter implements Filter {
 
     @EJB
     private MarketplaceService marketplaceService;
+
+    private boolean isSaml;
 
     public MarketplaceConfiguration getConfig(String marketplaceId) {
         return marketplaceService
@@ -91,41 +94,77 @@ public class ClosedMarketplaceFilter extends BaseBesFilter implements Filter {
 
             MarketplaceConfiguration config = getConfig(mId);
 
-            if (config != null && config.isRestricted()) {
+            if (config != null && voUserDetails != null && !isSameTenant(config, voUserDetails)) {
+                forwardToErrorPage(httpRequest, httpResponse);
+                return;
+            }
+
+            if (isMkpRestricted(config)) {
                 if (voUserDetails != null
                         && voUserDetails.getOrganizationId() != null) {
                     if (!config.getAllowedOrganizations().contains(
                             voUserDetails.getOrganizationId())) {
-                        forwardToErrorPage(httpRequest, httpResponse);
-                        return;
-                    } else {
-                        chain.doFilter(request, response);
-                        return;
+                        if (portalHasBeenRequested(httpRequest)) {
+                            httpResponse.sendRedirect(getRedirectToMkpAddress(httpRequest));
+                        } else {
+                            forwardToErrorPage(httpRequest, httpResponse);
+                        }
                     }
                 }
-
-                if (config.hasLandingPage() && !isSAMLAuthentication()) {
-                    chain.doFilter(request, response);
-                    return;
-                }
             }
-
         }
         chain.doFilter(request, response);
     }
 
+    private boolean isSameTenant(MarketplaceConfiguration config,
+            VOUserDetails voUserDetails) throws ServletException, IOException {
+        final String tenantIdFromMarketplace = config.getTenantId();
+
+        String userOrgTenant = voUserDetails.getTenantId();
+
+        if (userOrgTenant == null && tenantIdFromMarketplace == null) {
+            return true;
+        } else if (userOrgTenant != null
+                && userOrgTenant.equals(tenantIdFromMarketplace)) {
+            return true;
+        }
+        return false;
+    }
+
+    private String getRedirectToMkpAddress(HttpServletRequest httpRequest) {
+        String result;
+        if (httpRequest.isSecure()) {
+            result = getRedirectMpUrlHttps(getConfigurationService(httpRequest));
+        } else {
+            result = getRedirectMpUrlHttp(getConfigurationService(httpRequest));
+        }
+        return result;
+    }
+
+    private boolean portalHasBeenRequested(HttpServletRequest httpRequest) {
+        Object portalRequest = httpRequest.getSession().getAttribute(PORTAL_HAS_BEEN_REQUESTED);
+        return portalRequest != null ? ((Boolean) portalRequest).booleanValue() : false;
+    }
+
+    private boolean isMkpRestricted(MarketplaceConfiguration config) {
+        return config != null && config.isRestricted();
+    }
+
     boolean isSAMLAuthentication() {
-        ConfigurationService cfgService = getServiceAccess().getService(
-                ConfigurationService.class);
-        authSettings = new AuthenticationSettings(cfgService);
-        return authSettings.isServiceProvider();
+        if (!isSaml) {
+            ConfigurationService cfgService = getServiceAccess()
+                    .getService(ConfigurationService.class);
+            authSettings = new AuthenticationSettings(null, cfgService);
+            isSaml = authSettings.isServiceProvider();
+        }
+        return isSaml;
     }
 
     private ServiceAccess getServiceAccess() {
-        if (serviceAccess != null) {
-            return serviceAccess;
+        if (serviceAccess == null) {
+            serviceAccess = new EJBServiceAccess();
         }
-        return new EJBServiceAccess();
+        return serviceAccess;
     }
 
     private void forwardToErrorPage(HttpServletRequest httpRequest,

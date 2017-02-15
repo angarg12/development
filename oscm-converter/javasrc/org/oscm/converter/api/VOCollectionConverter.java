@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 20.02.2012                                                      
  *                                                                              
@@ -13,10 +13,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.oscm.dataservice.local.DataService;
+
 public class VOCollectionConverter {
 
     public static <T, S> List<T> convertList(List<S> sourceList,
             Class<T> targetType) {
+
+        return convertList(sourceList, targetType, null);
+    }
+
+    public static <T, S> List<T> convertList(List<S> sourceList,
+            Class<T> targetType, DataService ds) {
 
         if (sourceList == null) {
             return null;
@@ -25,7 +33,7 @@ public class VOCollectionConverter {
         List<T> targetList = new ArrayList<T>();
         for (S sourceVo : sourceList) {
             T targetVo = targetType.cast(VOConverter
-                    .reflectiveConvert(sourceVo));
+                    .reflectiveConvert(sourceVo, ds));
             if (targetVo != null) {
                 targetList.add(targetVo);
             }

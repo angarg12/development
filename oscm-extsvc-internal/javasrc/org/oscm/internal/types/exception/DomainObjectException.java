@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2009-02-23                                                      
  *                                                                              
@@ -372,7 +372,17 @@ public abstract class DomainObjectException extends SaaSApplicationException {
         /**
          * Marketplace access
          */
-        MARKETPLACE_ACCESS("marketplace_tkey, organization_tkey");
+        MARKETPLACE_ACCESS("marketplace_tkey, organization_tkey"),
+
+        /**
+         * Tenant
+         */
+        TENANT("tenantId"),
+        
+        /**
+         * 
+         */
+        TENANT_SETTING("name, tenant_tkey");
 
         /**
          * Stores the name of the fields containing the attribute name that

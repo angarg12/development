@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 2016-05-24
  *
@@ -8,7 +8,7 @@
 
 package org.oscm.app.vmware.remote.bes;
 
-import org.oscm.app.v1_0.BSSWebServiceFactory;
+import org.oscm.app.v2_0.BSSWebServiceFactory;
 import org.oscm.app.vmware.persistence.APPDataAccessService;
 
 public class BesClient {

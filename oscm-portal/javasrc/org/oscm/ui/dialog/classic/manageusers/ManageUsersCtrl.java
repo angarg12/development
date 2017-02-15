@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 04.09.2012                                                      
  *                                                                              
@@ -187,7 +187,7 @@ public class ManageUsersCtrl extends BaseBean {
 
         POUserDetails result = null;
         try {
-            result = getUserService().getUserDetails(selectedUserId);
+            result = getUserService().getUserDetails(selectedUserId, sessionBean.getTenantID());
         } catch (SaaSApplicationException e) {
             ui.handleException(e);
         }
@@ -342,7 +342,7 @@ public class ManageUsersCtrl extends BaseBean {
         POUser user = toPOUser(m);
         try {
             Response r = getUserService().deleteUser(user,
-                    ui.getMarketplaceId());
+                    ui.getMarketplaceId(), sessionBean.getTenantID());
             ui.handle(r, BaseBean.INFO_USER_DELETED, user.getUserId());
         } catch (TechnicalServiceNotAliveException
                 | TechnicalServiceOperationException e) {

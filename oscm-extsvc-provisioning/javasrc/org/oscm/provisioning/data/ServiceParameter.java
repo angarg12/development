@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2010-07-07                                                      
  *                                                                              
@@ -26,6 +26,11 @@ public class ServiceParameter {
      * 
      */
     private String value;
+
+    /**
+     * The indicator if the value must be encrypted.
+     */
+    private boolean encrypted;
 
     /**
      * Retrieves the identifier of the parameter.
@@ -63,6 +68,25 @@ public class ServiceParameter {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Returns true if the value must be encrypted.
+     * 
+     * @return the encrypted
+     */
+    public boolean isEncrypted() {
+        return encrypted;
+    }
+
+    /**
+     * Sets the indicator if the value must be encrypted.
+     * 
+     * @param encrypted
+     *            the encrypted to set
+     */
+    public void setEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
     }
 
 }

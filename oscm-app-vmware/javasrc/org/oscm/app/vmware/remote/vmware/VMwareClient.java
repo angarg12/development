@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 2016-05-24
  *
@@ -222,11 +222,11 @@ public class VMwareClient implements AutoCloseable {
         return null;
     }
 
-    public String retrieveTaskInfoKey(ManagedObjectReference task)
+    public TaskInfo retrieveTaskInfo(ManagedObjectReference task)
             throws Exception {
 
         return ((TaskInfo) getServiceUtil().getDynamicProperty(task,
-                PROPERTY_INFO)).getKey();
+                PROPERTY_INFO));
     }
 
 }

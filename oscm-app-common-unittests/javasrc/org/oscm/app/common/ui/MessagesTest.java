@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017                                        
  *                                                                              
  *  Creation Date: 16.05.2014                                                      
  *                                                                              
@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.oscm.app.common.i18n.Messages;
-import org.oscm.app.v1_0.data.LocalizedText;
+import org.oscm.app.v2_0.data.LocalizedText;
 
 /**
  * Unit test of property handler

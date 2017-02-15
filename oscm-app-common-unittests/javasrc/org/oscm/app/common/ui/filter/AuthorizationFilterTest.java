@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017 
  *******************************************************************************/
 
 package org.oscm.app.common.ui.filter;
@@ -11,8 +11,8 @@ package org.oscm.app.common.ui.filter;
  *  Creation Date: 26.05.2014                                                      
  *                                                                              
  *******************************************************************************/
-
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,17 +31,16 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-
-import org.oscm.test.EJBTestBase;
-import org.oscm.test.ejb.TestContainer;
 import org.oscm.app.common.APPlatformServiceMockup;
 import org.oscm.app.common.intf.ControllerAccess;
-import org.oscm.app.v1_0.data.PasswordAuthentication;
-import org.oscm.app.v1_0.data.User;
-import org.oscm.app.v1_0.exceptions.APPlatformException;
-import org.oscm.app.v1_0.exceptions.AuthenticationException;
-import org.oscm.app.v1_0.exceptions.ConfigurationException;
-import org.oscm.app.v1_0.intf.APPlatformService;
+import org.oscm.app.v2_0.data.PasswordAuthentication;
+import org.oscm.app.v2_0.data.User;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.oscm.app.v2_0.exceptions.AuthenticationException;
+import org.oscm.app.v2_0.exceptions.ConfigurationException;
+import org.oscm.app.v2_0.intf.APPlatformService;
+import org.oscm.test.EJBTestBase;
+import org.oscm.test.ejb.TestContainer;
 
 /**
  * Unit test of authorization filter
@@ -80,6 +79,13 @@ public class AuthorizationFilterTest extends EJBTestBase {
                 return user;
 
             }
+
+            @Override
+            public boolean checkToken(String token, String signature) {
+
+                return true;
+            }
+
         };
         enableJndiMock();
 
@@ -95,22 +101,22 @@ public class AuthorizationFilterTest extends EJBTestBase {
         Mockito.when(resp.getWriter()).thenReturn(new PrintWriter(responseOut));
         Mockito.when(req.getSession()).thenReturn(session);
         Mockito.when(req.getLocale()).thenReturn(new Locale("en"));
+        Mockito.when(config.getInitParameter("exclude-url-pattern")).thenReturn(
+                "(.*/a4j/.*|.*/img/.*|.*/css/.*|.*/fonts/.*|.*/scripts/.*|.*/faq/.*|.*/org.richfaces.resources|.*/javax.faces.resource/.*|^/public/.*)");
 
         controllerAccess = Mockito.mock(ControllerAccess.class);
-        Mockito.when(controllerAccess.getControllerId()).thenReturn(
-                "ess.common");
+        Mockito.when(controllerAccess.getControllerId())
+                .thenReturn("ess.common");
 
         filter = new AuthorizationFilter();
         filter.setControllerAccess(controllerAccess);
+        filter.init(config);
     }
 
     @Test
     public void testAuthenticateLoggedIn() throws Exception {
         Mockito.when(session.getAttribute(Matchers.eq("loggedInUserId")))
                 .thenReturn("user1");
-
-        // Init
-        filter.init(config);
 
         // And go!
         filter.doFilter(req, resp, chain);
@@ -128,8 +134,8 @@ public class AuthorizationFilterTest extends EJBTestBase {
         responseOut = new StringWriter();
 
         ServletResponse respWrong = Mockito.mock(ServletResponse.class);
-        Mockito.when(respWrong.getWriter()).thenReturn(
-                new PrintWriter(responseOut));
+        Mockito.when(respWrong.getWriter())
+                .thenReturn(new PrintWriter(responseOut));
         filter.doFilter(req, respWrong, chain);
         assertEquals("401", responseOut.toString());
 
@@ -142,11 +148,11 @@ public class AuthorizationFilterTest extends EJBTestBase {
                 .thenReturn(null);
 
         String credentials = "user1:password1";
-        String credentialsEncoded = Base64.encodeBase64String(credentials
-                .getBytes());
+        String credentialsEncoded = Base64
+                .encodeBase64String(credentials.getBytes());
 
-        Mockito.when(req.getHeader(Matchers.eq("Authorization"))).thenReturn(
-                "Basic " + credentialsEncoded);
+        Mockito.when(req.getHeader(Matchers.eq("Authorization")))
+                .thenReturn("Basic " + credentialsEncoded);
 
         // And go!
         filter.doFilter(req, resp, chain);
@@ -167,11 +173,8 @@ public class AuthorizationFilterTest extends EJBTestBase {
         Mockito.when(session.getAttribute(Matchers.eq("loggedInUserId")))
                 .thenReturn(null);
 
-        Mockito.when(req.getHeader(Matchers.eq("Authorization"))).thenReturn(
-                null);
-
-        // Init
-        filter.init(config);
+        Mockito.when(req.getHeader(Matchers.eq("Authorization")))
+                .thenReturn(null);
 
         // And go!
         filter.doFilter(req, resp, chain);
@@ -188,21 +191,18 @@ public class AuthorizationFilterTest extends EJBTestBase {
         Mockito.when(session.getAttribute(Matchers.eq("loggedInUserId")))
                 .thenReturn(null);
 
-        Mockito.when(req.getHeader(Matchers.eq("Authorization"))).thenReturn(
-                null);
+        Mockito.when(req.getHeader(Matchers.eq("Authorization")))
+                .thenReturn(null);
         Mockito.when(req.getLocale()).thenReturn(new Locale("ja"));
-        // given
-        filter.init(config);
 
         // when
         filter.doFilter(req, resp, chain);
 
         // then
         Mockito.verify(resp).setStatus(Matchers.eq(401));
-        Mockito.verify(resp)
-                .setHeader(
-                        Matchers.eq("WWW-Authenticate"),
-                        Matchers.startsWith("Basic realm=\"Please log in as technology manager\""));
+        Mockito.verify(resp).setHeader(Matchers.eq("WWW-Authenticate"),
+                Matchers.startsWith(
+                        "Basic realm=\"Please log in as technology manager\""));
 
     }
 
@@ -229,11 +229,11 @@ public class AuthorizationFilterTest extends EJBTestBase {
                 .thenReturn(null);
 
         String credentials = "user1:password1";
-        String credentialsEncoded = Base64.encodeBase64String(credentials
-                .getBytes());
+        String credentialsEncoded = Base64
+                .encodeBase64String(credentials.getBytes());
 
-        Mockito.when(req.getHeader(Matchers.eq("Authorization"))).thenReturn(
-                "UnknownSSO " + credentialsEncoded);
+        Mockito.when(req.getHeader(Matchers.eq("Authorization")))
+                .thenReturn("UnknownSSO " + credentialsEncoded);
 
         // And go!
         filter.doFilter(req, resp, chain);
@@ -250,11 +250,11 @@ public class AuthorizationFilterTest extends EJBTestBase {
                 .thenReturn(null);
 
         String credentials = "user1_password1";
-        String credentialsEncoded = Base64.encodeBase64String(credentials
-                .getBytes());
+        String credentialsEncoded = Base64
+                .encodeBase64String(credentials.getBytes());
 
-        Mockito.when(req.getHeader(Matchers.eq("Authorization"))).thenReturn(
-                "Basic " + credentialsEncoded);
+        Mockito.when(req.getHeader(Matchers.eq("Authorization")))
+                .thenReturn("Basic " + credentialsEncoded);
 
         // And go!
         filter.doFilter(req, resp, chain);
@@ -274,11 +274,11 @@ public class AuthorizationFilterTest extends EJBTestBase {
                 .thenReturn(null);
 
         String credentials = "user1:password1";
-        String credentialsEncoded = Base64.encodeBase64String(credentials
-                .getBytes());
+        String credentialsEncoded = Base64
+                .encodeBase64String(credentials.getBytes());
 
-        Mockito.when(req.getHeader(Matchers.eq("Authorization"))).thenReturn(
-                "Basic " + credentialsEncoded);
+        Mockito.when(req.getHeader(Matchers.eq("Authorization")))
+                .thenReturn("Basic " + credentialsEncoded);
 
         // And go!
         filter.doFilter(req, resp, chain);
@@ -287,5 +287,89 @@ public class AuthorizationFilterTest extends EJBTestBase {
         Mockito.verify(resp).setStatus(Matchers.eq(401));
         Mockito.verify(resp).setHeader(Matchers.eq("WWW-Authenticate"),
                 Matchers.startsWith("Basic "));
+    }
+
+    @Test
+    public void testCustomTabAuth() throws Exception {
+        exception = false;
+        Mockito.when(req.getServletPath()).thenReturn("/serverInformation.jsf");
+
+        final String instId = "stack-ad8c51f1-d44b-489c-a2f6-40e8e68e0d86";
+        String encodedInstId = new String(
+                Base64.encodeBase64(instId.getBytes()), "UTF-8");
+        doReturn(encodedInstId).when(req).getParameter(Matchers.eq("instId"));
+
+        final String orgId = "org1";
+        String encodedOrgId = new String(Base64.encodeBase64(orgId.getBytes()),
+                "UTF-8");
+        doReturn(encodedOrgId).when(req).getParameter(Matchers.eq("orgId"));
+
+        final String subId = "sub1";
+        String encodedSubId = new String(Base64.encodeBase64(subId.getBytes()),
+                "UTF-8");
+        doReturn(encodedSubId).when(req).getParameter(Matchers.eq("subId"));
+
+        final String timestamp = Long.toString(System.currentTimeMillis());
+        doReturn(timestamp).when(req).getParameter(Matchers.eq("timestamp"));
+
+        final String signature = "123eadfgh2awdsf234asdfgs";
+        String encodedSignature = new String(
+                Base64.encodeBase64(signature.getBytes()), "UTF-8");
+        doReturn(encodedSignature).when(req)
+                .getParameter(Matchers.eq("signature"));
+
+        // And go!
+        filter.doFilter(req, resp, chain);
+
+        // Check whether request has been forwarded and user is logged in
+        Mockito.verify(chain).doFilter(Matchers.eq(req), Matchers.eq(resp));
+        Mockito.verify(resp, Mockito.never()).setStatus(Matchers.eq(401));
+        Mockito.verify(resp, Mockito.never()).setHeader(
+                Matchers.eq("WWW-Authenticate"), Matchers.startsWith("Basic "));
+
+        // And destroy
+        filter.destroy();
+    }
+
+    @Test
+    public void testCustomTabAuth_expired() throws Exception {
+        exception = false;
+        Mockito.when(req.getServletPath()).thenReturn("/serverInformation.jsf");
+
+        final String instId = "stack-ad8c51f1-d44b-489c-a2f6-40e8e68e0d86";
+        String encodedInstId = new String(
+                Base64.encodeBase64(instId.getBytes()), "UTF-8");
+        doReturn(encodedInstId).when(req).getParameter(Matchers.eq("instId"));
+
+        final String orgId = "org1";
+        String encodedOrgId = new String(Base64.encodeBase64(orgId.getBytes()),
+                "UTF-8");
+        doReturn(encodedOrgId).when(req).getParameter(Matchers.eq("orgId"));
+
+        final String subId = "sub1";
+        String encodedSubId = new String(Base64.encodeBase64(subId.getBytes()),
+                "UTF-8");
+        doReturn(encodedSubId).when(req).getParameter(Matchers.eq("subId"));
+
+        final String timestamp = Long
+                .toString(System.currentTimeMillis() - 1000000);
+        doReturn(timestamp).when(req).getParameter(Matchers.eq("timestamp"));
+
+        final String signature = "123eadfgh2awdsf234asdfgs";
+        String encodedSignature = new String(
+                Base64.encodeBase64(signature.getBytes()), "UTF-8");
+        doReturn(encodedSignature).when(req)
+                .getParameter(Matchers.eq("signature"));
+
+        // And go!
+        filter.doFilter(req, resp, chain);
+
+        // Check whether request has been forwarded and user is logged in
+        Mockito.verify(chain, Mockito.never()).doFilter(Matchers.eq(req),
+                Matchers.eq(resp));
+        Mockito.verify(resp).setStatus(Matchers.eq(401));
+
+        // And destroy
+        filter.destroy();
     }
 }

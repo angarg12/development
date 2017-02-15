@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2009-03-20                                                      
  *                                                                              
@@ -528,7 +528,9 @@ public class ValidationException extends SaaSApplicationException {
         /**
          * UserCount Timer expiration date invalid
          */
-        TIMER_USERCOUNT_EXPIRATIONDATE_INVALID;
+        TIMER_USERCOUNT_EXPIRATIONDATE_INVALID,
+        
+        USER_ID_DUPLICATED;
 
         private String messageKey;
 

@@ -1,4 +1,4 @@
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 <!--
   ~ *******************************************************************************
   ~ *
@@ -64,13 +64,6 @@
                 <ui:param name="inputList" value="#{upgradeWizardConversation.model.subscriptionUdaRows}" />
                 <ui:param name="udasReadOnly" value="false" />
               </ui:include>
-
-              <ui:fragment rendered="#{not empty upgradeWizardConversation.model.organizationUdaRows}">
-                <ui:include src="../../account/organizationUdaDetails.xhtml">
-                  <ui:param name="inputList" value="#{upgradeWizardConversation.model.organizationUdaRows}" />
-                  <ui:param name="readOnly" value="false" />
-                </ui:include>
-              </ui:fragment>
 
               <ui:fragment rendered="#{upgradeWizardConversation.model.useExternalConfigurator}">
                 <mp:outputStep value="#{msg['parameter.table.header']}" />

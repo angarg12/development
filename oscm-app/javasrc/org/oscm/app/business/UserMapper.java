@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 02.10.2014                                                      
  *                                                                              
@@ -8,7 +8,7 @@
 
 package org.oscm.app.business;
 
-import org.oscm.app.v1_0.data.ServiceUser;
+import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.provisioning.data.User;
 
 /**

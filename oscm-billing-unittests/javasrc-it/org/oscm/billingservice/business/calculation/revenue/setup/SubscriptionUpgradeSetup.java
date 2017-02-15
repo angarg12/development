@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 27.03.2013                                                      
  *                                                                              
@@ -91,6 +91,7 @@ import org.oscm.marketplace.auditlog.MarketplaceAuditLogCollector;
 import org.oscm.marketplace.bean.LandingpageServiceBean;
 import org.oscm.marketplace.bean.MarketplaceServiceBean;
 import org.oscm.marketplace.bean.MarketplaceServiceLocalBean;
+import org.oscm.marketplace.cache.MarketplaceCacheServiceBean;
 import org.oscm.marketplace.dao.MarketplaceAccessDao;
 import org.oscm.operatorservice.bean.OperatorServiceBean;
 import org.oscm.paymentservice.bean.PaymentServiceBean;
@@ -176,7 +177,7 @@ public class SubscriptionUpgradeSetup {
             @Override
             public List<TriggerProcessMessageData> sendSuspendingMessages(
                     List<TriggerMessage> messageData) {
-                List<TriggerProcessMessageData> result = new ArrayList<TriggerProcessMessageData>();
+                List<TriggerProcessMessageData> result = new ArrayList<>();
                 for (TriggerMessage m : messageData) {
                     TriggerProcess tp = new TriggerProcess();
                     tp.setUser(adminUser);
@@ -197,6 +198,7 @@ public class SubscriptionUpgradeSetup {
         container.addBean(new UserGroupUsersDao());
         container.addBean(new UserGroupAuditLogCollector());
         container.addBean(new UserGroupServiceLocalBean());
+        container.addBean(new MarketplaceCacheServiceBean());
         container.addBean(new LandingpageServiceBean());
         container.addBean(new ServiceProvisioningServiceLocalizationBean());
         container.addBean(new BillingAdapterLocalBean());
@@ -258,9 +260,8 @@ public class SubscriptionUpgradeSetup {
         doReturn(EMPTY_STRING).when(localizerMock).getLocalizedTextFromBundle(
                 any(LocalizedObjectTypes.class), any(Marketplace.class),
                 any(String.class), any(String.class));
-        doReturn(EMPTY_STRING).when(localizerMock)
-                .getLocalizedTextFromDatabase(any(String.class), anyLong(),
-                        any(LocalizedObjectTypes.class));
+        doReturn(EMPTY_STRING).when(localizerMock).getLocalizedTextFromDatabase(
+                any(String.class), anyLong(), any(LocalizedObjectTypes.class));
         return localizerMock;
     }
 
@@ -280,6 +281,20 @@ public class SubscriptionUpgradeSetup {
                 try {
                     user = container.get(IdentityServiceLocal.class)
                             .getPlatformUser(userId, false);
+                } catch (ObjectNotFoundException
+                        | OperationNotPermittedException exception) {
+                    throw new UnsupportedOperationException();
+                }
+                return user;
+            }
+
+            @Override
+            public PlatformUser getPlatformUser(String userId, String tenantId,
+                    boolean validateOrganization) {
+                PlatformUser user = null;
+                try {
+                    user = container.get(IdentityServiceLocal.class)
+                            .getPlatformUser(userId, tenantId, false);
                 } catch (ObjectNotFoundException
                         | OperationNotPermittedException exception) {
                     throw new UnsupportedOperationException();
@@ -315,7 +330,8 @@ public class SubscriptionUpgradeSetup {
                 TenantProvisioningResult result = new TenantProvisioningResult();
                 ProvisioningType provType = subscription.getProduct()
                         .getTechnicalProduct().getProvisioningType();
-                result.setAsyncProvisioning(provType == ProvisioningType.ASYNCHRONOUS);
+                result.setAsyncProvisioning(
+                        provType == ProvisioningType.ASYNCHRONOUS);
                 return result;
             }
 
@@ -419,21 +435,21 @@ public class SubscriptionUpgradeSetup {
         marketplace.setName(name);
         marketplace.setOwningOrganizationId(ownerId);
         marketplace.setOpen(true);
-        return container.get(MarketplaceService.class).createMarketplace(
-                marketplace);
+        return container.get(MarketplaceService.class)
+                .createMarketplace(marketplace);
     }
 
     public static void importTechnicalService(TestContainer container,
             String technicalService) throws Exception {
         ServiceProvisioningService provisioningService = container
                 .get(ServiceProvisioningService.class);
-        provisioningService.importTechnicalServices(technicalService
-                .getBytes("UTF-8"));
+        provisioningService
+                .importTechnicalServices(technicalService.getBytes("UTF-8"));
     }
 
-    public static VOService createAndPublishFreeProduct(
-            TestContainer container, VOTechnicalService technicalService,
-            VOMarketplace marketplace) throws Exception {
+    public static VOService createAndPublishFreeProduct(TestContainer container,
+            VOTechnicalService technicalService, VOMarketplace marketplace)
+            throws Exception {
 
         double oneTimeFee = 0D;
         double pricePerPeriod = 0D;
@@ -547,8 +563,8 @@ public class SubscriptionUpgradeSetup {
 
         VOServiceDetails voServiceDetails = new VOServiceDetails();
         voServiceDetails.setServiceId(serviceId);
-        VOServiceDetails serviceDetails = provisioningService.createService(
-                technicalService, voServiceDetails, null);
+        VOServiceDetails serviceDetails = provisioningService
+                .createService(technicalService, voServiceDetails, null);
 
         VOPriceModel priceModel = new VOPriceModel();
         priceModel.setType(priceModelType);
@@ -570,8 +586,8 @@ public class SubscriptionUpgradeSetup {
 
     public static VOService activateService(TestContainer container,
             VOService service) throws Exception {
-        return container.get(ServiceProvisioningService.class).activateService(
-                service);
+        return container.get(ServiceProvisioningService.class)
+                .activateService(service);
     }
 
     public static void defineUpgradePath(TestContainer container,
@@ -579,7 +595,7 @@ public class SubscriptionUpgradeSetup {
         ServiceProvisioningService provisioningService = container
                 .get(ServiceProvisioningService.class);
 
-        List<VOService> allServices = new ArrayList<VOService>();
+        List<VOService> allServices = new ArrayList<>();
         allServices.addAll(Arrays.asList(services));
 
         for (VOService srv : services) {
@@ -591,7 +607,7 @@ public class SubscriptionUpgradeSetup {
 
     public static List<VOService> getServices(TestContainer container,
             List<VOService> services) throws Exception {
-        List<VOService> serviceList = new ArrayList<VOService>();
+        List<VOService> serviceList = new ArrayList<>();
         for (VOService service : services) {
             serviceList.add(getServiceDetails(container, service));
         }
@@ -635,7 +651,8 @@ public class SubscriptionUpgradeSetup {
             Set<VOPaymentType> defaultPaymentTypes,
             PaymentInfoType paymentInfoType) {
         for (VOPaymentType voPaymentType : defaultPaymentTypes) {
-            if (voPaymentType.getPaymentTypeId().equals(paymentInfoType.name())) {
+            if (voPaymentType.getPaymentTypeId()
+                    .equals(paymentInfoType.name())) {
                 return voPaymentType;
             }
         }

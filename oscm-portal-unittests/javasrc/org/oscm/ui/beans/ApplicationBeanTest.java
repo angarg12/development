@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: Aleh Khomich                                                      
  *                                                                              
@@ -392,6 +392,32 @@ public class ApplicationBeanTest {
         boolean isInternalAuthMode = bean.isInternalAuthMode();
         // then
         assertFalse(isInternalAuthMode);
+    }
+
+    @Test
+    public void isSpSamlAuthMode() {
+        // given
+        when(
+            mock.getVOConfigurationSetting(eq(ConfigurationKey.AUTH_MODE),
+                anyString())).thenReturn(
+            createSetting(ConfigurationKey.AUTH_MODE, "SAML_SP"));
+        // when
+        boolean isSamlSpAuthMode = bean.isSamlSpAuthMode();
+        // then
+        assertTrue(isSamlSpAuthMode);
+    }
+
+    @Test
+    public void isSpSamlAuthMode_not() {
+        // given
+        when(
+            mock.getVOConfigurationSetting(eq(ConfigurationKey.AUTH_MODE),
+                anyString())).thenReturn(
+            createSetting(ConfigurationKey.AUTH_MODE, "INTERNAL"));
+        // when
+        boolean isSamlSpAuthMode = bean.isSamlSpAuthMode();
+        // then
+        assertFalse(isSamlSpAuthMode);
     }
 
     @Test

@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 19.04.2012                                                      
  *                                                                              
@@ -122,6 +122,10 @@ public class DbMessagesTest {
         Properties properties = new Properties();
         properties.put("key", "value");
         doReturn(properties).when(lsMock).loadMessageProperties(anyString());
+        doReturn(properties).when(brMock).loadMessagePropertiesFromDB(
+                anyString(), anyString());
+        doReturn(brMock).when(dbm).getBrandManagementService(
+                any(ServiceAccess.class));
         // when
         String value = (String) dbm.handleGetObject("key");
         // then

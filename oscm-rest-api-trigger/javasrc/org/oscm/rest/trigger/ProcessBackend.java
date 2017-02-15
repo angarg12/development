@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                           
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: Apr 28, 2016                                                      
  *                                                                              
@@ -49,7 +49,7 @@ public class ProcessBackend {
         return new RestBackend.Put<ProcessRepresentation, TriggerParameters>() {
 
             @Override
-            public void put(ProcessRepresentation content,
+            public boolean put(ProcessRepresentation content,
                     TriggerParameters params) throws WebApplicationException {
 
                 try {
@@ -75,7 +75,7 @@ public class ProcessBackend {
                         throw e;
                     }
                 }
-
+                return true;
             }
         };
     }
@@ -86,7 +86,7 @@ public class ProcessBackend {
         return new RestBackend.Put<ProcessRepresentation, TriggerParameters>() {
 
             @Override
-            public void put(ProcessRepresentation content,
+            public boolean put(ProcessRepresentation content,
                     TriggerParameters params) throws WebApplicationException {
 
                 try {
@@ -113,7 +113,7 @@ public class ProcessBackend {
                         throw e;
                     }
                 }
-
+                return true;
             }
         };
     }
@@ -124,7 +124,7 @@ public class ProcessBackend {
         return new RestBackend.Put<ProcessRepresentation, TriggerParameters>() {
 
             @Override
-            public void put(ProcessRepresentation content,
+            public boolean put(ProcessRepresentation content,
                     TriggerParameters params) throws WebApplicationException {
 
                 try {
@@ -151,7 +151,7 @@ public class ProcessBackend {
                         throw e;
                     }
                 }
-
+                return true;
             }
         };
 

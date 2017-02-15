@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                            
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Creation Date: Sep 19, 2011                                                 
  *                                                                              
@@ -190,9 +190,9 @@ public class Log4jLoggerTest {
     public void testGetLogMessageText_00001() {
         String msg = logger.getLogMessageText(
                 LogMessageIdentifier.INFO_USER_LOGIN_SUCCESS, "testuser",
-                "127.0.0.1");
+                "127.0.0.1", "tenantID");
         assertEquals(
-                "00001: User 'testuser' logged in (access from 127.0.0.1)", msg);
+                "00001: User 'testuser' for tenant tenantID logged in (access from 127.0.0.1)", msg);
     }
 
     @Test

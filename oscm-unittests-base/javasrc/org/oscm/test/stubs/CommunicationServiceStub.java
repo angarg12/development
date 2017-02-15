@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.test.stubs;
@@ -57,5 +57,10 @@ public class CommunicationServiceStub implements CommunicationServiceLocal {
     @Override
     public String getBaseUrl() {
         return null;
+    }
+
+    @Override
+    public String getBaseUrlWithTenant(String tenantId) throws MailOperationException {
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Creation Date: 18.12.2009                                                      
  *                                                                              
@@ -68,6 +68,12 @@ public class IdentityServiceStub implements IdentityServiceLocal {
             Organization organization, String password, Long serviceKey,
             Marketplace marketplace) throws NonUniqueBusinessKeyException,
             ObjectNotFoundException, ValidationException {
+    }
+
+    @Override
+    public PlatformUser getPlatformUser(String userId, String tenantKey, boolean validateOrganization)
+        throws ObjectNotFoundException, OperationNotPermittedException {
+        return null;
     }
 
     @Override
@@ -301,5 +307,11 @@ public class IdentityServiceStub implements IdentityServiceLocal {
     @Override
     public void revokeUnitRole(PlatformUser user, UserRoleType role)
             throws UserModificationConstraintException {
+    }
+
+    @Override
+    public PlatformUser getPlatformUserByOrganization(String userId,
+            String orgId) throws ObjectNotFoundException {
+        return null;
     }
 }

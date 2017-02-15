@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: hoffmann                                                      
  *                                                                              
@@ -71,6 +71,8 @@ public class MenuBean extends BaseBean implements UIStatus, Serializable {
     public static final String LINK_OPERATOR_EXECUTE_BILLING_TASKS = "/operator/executeBillingTasks.jsf";
     public static final String LINK_OPERATOR_EXPORT_AUDIT_LOG_DATA = "/operator/exportAuditLogData.jsf";
     public static final String LINK_OPERATOR_MANAGE_LANGUAGES = "/operator/manageLanguages.jsf";
+    public static final String LINK_OPERATOR_MANAGE_TENANTS = "/operator/manageTenants.jsf";
+    public static final String LINK_OPERATOR_MANAGE_INDEXES = "/operator/manageIndexes.jsf";
     public static final String LINK_ORGANIZATION_ADD_CUSTOMER = "/organization/addCustomer.jsf";
     public static final String LINK_ORGANIZATION_EDIT_CUSTOMER = "/organization/editCustomer.jsf";
     public static final String LINK_ORGANIZATION_VIEW_CUSTOMER = "/organization/viewCustomer.jsf";
@@ -381,6 +383,8 @@ public class MenuBean extends BaseBean implements UIStatus, Serializable {
                 INTERNAL_AUTH_MODE);
         group.addItem(HiddenUIConstants.MENU_ITEM_OPERATOR_MANAGE_CONFIGURATION,
                 LINK_MANAGE_CONFIGURATION, OPERATOR);
+        group.addItem(HiddenUIConstants.MENU_ITEM_OPERATOR_MANAGE_INDEXES,
+                LINK_OPERATOR_MANAGE_INDEXES, OPERATOR);
         group.addItem(HiddenUIConstants.MENU_ITEM_OPERATOR_EXPORT_BILLING_DATA,
                 LINK_OPERATOR_EXPORT_BILLING_DATA);
         group.addItem(
@@ -394,6 +398,8 @@ public class MenuBean extends BaseBean implements UIStatus, Serializable {
         group.addItem(
                 HiddenUIConstants.MENU_ITEM_OPERATOR_MANAGE_BILLING_ADAPTERS,
                 LINK_OPERATOR_MANAGE_BILLING_ADAPTERS, OPERATOR);
+        group.addItem(HiddenUIConstants.MENU_ITEM_OPERATOR_MANAGE_TENANTS,
+                LINK_OPERATOR_MANAGE_TENANTS, OPERATOR, SAML_SP_AUTH_MODE);
 
         // === CUSTOMER ========================================================
         group = main.addGroup(HiddenUIConstants.MENU_GROUP_NAVIGATION_CUSTOMER,

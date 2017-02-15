@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                           
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: May 12, 2016                                                      
  *                                                                              
@@ -59,6 +59,20 @@ public abstract class Representation {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    protected long convertIdToKey() {
+        if (getId() == null) {
+            return 0L;
+        }
+        return getId().longValue();
+    }
+
+    protected int convertETagToVersion() {
+        if (getETag() == null) {
+            return 0;
+        }
+        return getETag().intValue();
     }
 
     /**

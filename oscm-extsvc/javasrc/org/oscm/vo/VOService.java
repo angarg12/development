@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2009-09-17                                                      
  *                                                                              
@@ -125,6 +125,16 @@ public class VOService extends BaseVO implements Serializable {
      * The URL of an external tool for configuring the service parameters
      */
     private String configuratorUrl;
+
+    /**
+     * The URL of the custom tab on my subscriptions page
+     */
+    private String customTabUrl;
+
+    /**
+     * The Name of the custom tab on my subscriptions page
+     */
+    private String customTabName;
 
     /**
      * Retrieves the text describing the service.
@@ -507,6 +517,14 @@ public class VOService extends BaseVO implements Serializable {
     }
 
     /**
+     *
+     * @return The URL of the custom tab on my subscriptions page
+     */
+    public String getCustomTabUrl() {
+        return customTabUrl;
+    }
+
+    /**
      * Sets the URL of an external tool for configuring the service parameters.
      * 
      * @param configuratorUrl
@@ -516,4 +534,15 @@ public class VOService extends BaseVO implements Serializable {
         this.configuratorUrl = configuratorUrl;
     }
 
+    public void setCustomTabUrl(String customTabUrl) {
+        this.customTabUrl = customTabUrl;
+    }
+
+    public String getCustomTabName() {
+        return customTabName;
+    }
+
+    public void setCustomTabName(String customTabName) {
+        this.customTabName = customTabName;
+    }
 }

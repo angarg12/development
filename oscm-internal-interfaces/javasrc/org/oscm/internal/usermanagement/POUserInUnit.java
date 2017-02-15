@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                           
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 05.02.2014                                                      
  *                                                                              
@@ -23,6 +23,7 @@ public class POUserInUnit implements Serializable {
     private Salutation salutation;
     private String locale;
     private List<UserRoleType> assignedRoles;
+    private String tenantId;
 
     public boolean isSelected() {
         return selected;
@@ -84,4 +85,11 @@ public class POUserInUnit implements Serializable {
         this.assignedRoles = assignedRoles;
     }
 
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
 }

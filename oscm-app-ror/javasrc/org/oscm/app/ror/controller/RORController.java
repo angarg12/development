@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2012-11-27                                                      
  *                                                                              
@@ -12,8 +12,8 @@ import javax.ejb.Stateless;
 
 import org.oscm.app.iaas.PropertyHandler;
 import org.oscm.app.iaas.controller.IaasController;
-import org.oscm.app.v1_0.exceptions.APPlatformException;
-import org.oscm.app.v1_0.intf.APPlatformController;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.oscm.app.v2_0.intf.APPlatformController;
 
 /**
  * ROR Controller

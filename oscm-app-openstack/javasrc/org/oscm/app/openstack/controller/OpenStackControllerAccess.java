@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Creation Date: 03.07.2014                                                      
  *                                                                              
@@ -30,11 +30,12 @@ public class OpenStackControllerAccess implements ControllerAccess {
 
     @Override
     public List<String> getControllerParameterKeys() {
-        LinkedList<String> result = new LinkedList<String>();
+        LinkedList<String> result = new LinkedList<>();
         result.add(PropertyHandler.API_USER_NAME);
         result.add(PropertyHandler.API_USER_PWD);
         result.add(PropertyHandler.KEYSTONE_API_URL);
-        result.add(PropertyHandler.TENANT_NAME);
+        result.add(PropertyHandler.TENANT_ID);
+        result.add(PropertyHandler.DOMAIN_NAME);
         result.add(PropertyHandler.TEMPLATE_BASE_URL);
         return result;
     }

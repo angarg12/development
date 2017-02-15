@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 11.10.2013                                                      
  *                                                                              
@@ -8,12 +8,16 @@
 
 package org.oscm.ui.dialog.common.saml2;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import java.io.Serializable;
 
 /**
  * @author roderus
  * 
  */
+@ManagedBean
+@RequestScoped
 public class Saml2Model implements Serializable {
 
     private static final long serialVersionUID = 1L;

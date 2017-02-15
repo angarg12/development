@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: Enes Sejfi                                               
  *                                                                              
@@ -176,15 +176,6 @@ public class SearchServiceWSTest {
         servicesForMarketplace1.remove(servicesForMarketplace1.size() - 1);
         System.out.println("Available services after delete: "
                 + servicesForMarketplace1.size());
-    }
-
-    @Test
-    public void testSearchServicesWithInvalidPattern() throws Exception {
-        VOServiceListResult result = searchService_Supplier.searchServices(
-                getMarketplace("1").getMarketplaceId(), "de", "*");
-
-        assertEquals(0, result.getServices().size());
-        assertEquals(0, result.getResultSize());
     }
 
     @Test

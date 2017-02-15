@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2010-07-29                                                      
  *                                                                              
@@ -27,6 +27,8 @@ public class VOServiceLocalization implements Serializable {
     private List<VOLocalizedText> descriptions = new ArrayList<VOLocalizedText>();
 
     private List<VOLocalizedText> shortDescriptions = new ArrayList<VOLocalizedText>();
+
+    private List<VOLocalizedText> customTabNames = new ArrayList<>();
 
     /**
      * Returns the localized variants of the service's name.
@@ -83,6 +85,14 @@ public class VOServiceLocalization implements Serializable {
      */
     public void setShortDescriptions(List<VOLocalizedText> shortDescriptions) {
         this.shortDescriptions = shortDescriptions;
+    }
+
+    public List<VOLocalizedText> getCustomTabNames() {
+        return customTabNames;
+    }
+
+    public void setCustomTabNames(List<VOLocalizedText> customTabNames) {
+        this.customTabNames = customTabNames;
     }
 
 }
