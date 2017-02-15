@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                              
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 2015年4月30日                                                      
  *                                                                              
@@ -35,7 +35,9 @@ public class HeadersTest {
                     + "resources" + java.io.File.separator + "workapp",
             "oscm-portal-webtests" + java.io.File.separator + "results",
             "oscm-build" + java.io.File.separator + "result",
-            java.io.File.separator + "bin");
+            java.io.File.separator + "bin",
+            "oscm-app-sample" + java.io.File.separator
+                    + "resources");
 
     @Test
     public void testIsContainCopyrightHeader() {
@@ -95,7 +97,7 @@ public class HeadersTest {
                             || fileName.contains("import_en.css")) {
                         continue;
                     }
-                    checkFile(fileName, "*  Copyright FUJITSU LIMITED 2016");
+                    checkFile(fileName, "*  Copyright FUJITSU LIMITED 2017");
                 } else if (fileName.toLowerCase().endsWith(".xml")
                         || fileName.toLowerCase().endsWith(".xhtml")) {
                     if (fileName
@@ -103,7 +105,7 @@ public class HeadersTest {
                         continue;
                     }
                     checkFile(fileName,
-                            "<!-- Copyright FUJITSU LIMITED 2016-->");
+                            "<!-- Copyright FUJITSU LIMITED 2017-->");
                 } else if (fileName.toLowerCase().endsWith(".properties")) {
                     if (fileName.toLowerCase().contains(
                             "oscm-common-unittests" + java.io.File.separator
@@ -111,7 +113,7 @@ public class HeadersTest {
                             || fileName.contains("wt.testInWork.properties")) {
                         continue;
                     }
-                    checkFile(fileName, "# Copyright FUJITSU LIMITED 2016");
+                    checkFile(fileName, "# Copyright FUJITSU LIMITED 2017");
                 }
             }
         }

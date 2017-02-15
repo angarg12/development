@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 2015年3月2日                                                      
  *                                                                              
@@ -30,7 +30,7 @@ public class WSDLFilter implements Filter {
 
     private final String urlPattern = "/(v.*/)?(.*service)/(basic|sts|clientcert)";
     private final String servletUrl = "/WSDLDeliverServlet";
-
+    private final String tenantIdParam = "tenantID";
     @Override
     public void destroy() {
 
@@ -53,6 +53,10 @@ public class WSDLFilter implements Filter {
             httpRequest.setAttribute(WSDLDeliverServlet.PORT_TYPE, portType);
             String fileType = request.getParameterNames().nextElement();
             httpRequest.setAttribute(WSDLDeliverServlet.FILE_TYPE, fileType);
+            
+            String tenantId = httpRequest.getParameter(tenantIdParam);
+            httpRequest.setAttribute(WSDLDeliverServlet.TENANT_ID, tenantId);
+            
             httpRequest.getRequestDispatcher(servletUrl).forward(httpRequest,
                     response);
         }

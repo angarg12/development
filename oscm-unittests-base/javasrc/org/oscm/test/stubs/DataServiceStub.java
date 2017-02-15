@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.test.stubs;
@@ -65,6 +65,11 @@ public class DataServiceStub implements DataService {
     @Override
     public DomainObject<?> find(DomainObject<?> idobj) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PlatformUser find(PlatformUser pu) {
+        return null;
     }
 
     @Override
@@ -161,5 +166,10 @@ public class DataServiceStub implements DataService {
     @Override
     public EntityManager getEntityManager() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void persistPlatformUserWithTenant(PlatformUser pu, String tenantId) throws NonUniqueBusinessKeyException {
+
     }
 }

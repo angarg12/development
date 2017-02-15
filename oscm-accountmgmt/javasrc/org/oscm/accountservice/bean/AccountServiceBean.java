@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: Peter Pock                                                      
  *                                                                              
@@ -116,6 +116,7 @@ import org.oscm.internal.types.exception.AddMarketingPermissionException;
 import org.oscm.internal.types.exception.ConcurrentModificationException;
 import org.oscm.internal.types.exception.DeletionConstraintException;
 import org.oscm.internal.types.exception.DistinguishedNameException;
+import org.oscm.internal.types.exception.DomainObjectException;
 import org.oscm.internal.types.exception.DomainObjectException.ClassEnum;
 import org.oscm.internal.types.exception.ImageException;
 import org.oscm.internal.types.exception.IncompatibleRolesException;
@@ -353,6 +354,18 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         LocalizerFacade localizerEn = new LocalizerFacade(localizer, "en");
         return localizerEn.getText(orgKey,
                 LocalizedObjectTypes.ORGANIZATION_DESCRIPTION);
+    }
+
+    @Override
+    public String getLocalizedAttributeName(long key, String locale) {
+        List<VOLocalizedText> texts = localizer.getLocalizedValues(key,
+                LocalizedObjectTypes.CUSTOM_ATTRIBUTE_NAME);
+        for (VOLocalizedText text : texts) {
+            if (text.getLocale().equals(locale)) {
+                return text.getText();
+            }
+        }
+        return "";
     }
 
     /**
@@ -642,7 +655,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         Marketplace marketplace = getMarketplace(marketplaceId);
 
         // bugfix 8183
-        List<PlatformUser> platformUsers = new LinkedList<PlatformUser>();
+        List<PlatformUser> platformUsers = new LinkedList<>();
         platformUsers.add(currentUser);
 
         if (oldUser != null
@@ -706,7 +719,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     @Override
     @RolesAllowed({ "SERVICE_MANAGER", "RESELLER_MANAGER", "BROKER_MANAGER" })
     public List<VOOrganization> getMyCustomers() {
-        List<VOOrganization> result = new ArrayList<VOOrganization>();
+        List<VOOrganization> result = new ArrayList<>();
 
         PlatformUser user = dm.getCurrentUser();
         Organization seller = user.getOrganization();
@@ -728,7 +741,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     @Override
     @RolesAllowed({ "SERVICE_MANAGER", "RESELLER_MANAGER", "BROKER_MANAGER" })
     public List<VOOrganization> getMyCustomersOptimization() {
-        List<VOOrganization> result = new ArrayList<VOOrganization>();
+        List<VOOrganization> result = new ArrayList<>();
 
         PlatformUser user = dm.getCurrentUser();
         Organization seller = user.getOrganization();
@@ -771,7 +784,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         query.setParameter("referenceType", referenceType);
         List<Object[]> result = ParameterizedTypes.list(query.getResultList(),
                 Object[].class);
-        List<Organization> customerList = new ArrayList<Organization>();
+        List<Organization> customerList = new ArrayList<>();
         for (Object[] resultElement : result) {
             Organization customer = new Organization();
             customer.setKey(new Long(resultElement[0].toString()));
@@ -998,6 +1011,12 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
             MailOperationException, ObjectNotFoundException,
             IncompatibleRolesException, OrganizationAuthorityException {
 
+        long tenantKey = organization.getTenant() == null ? 0 : organization
+                .getTenant().getKey();
+        if (checkIfPlatformUserInGivenTenantExists(tenantKey, user.getUserId())) {
+            throw new NonUniqueBusinessKeyException(
+                    DomainObjectException.ClassEnum.USER, user.getUserId());
+        }
         for (OrganizationRoleType roleToSet : roles) {
             if (roleToSet.equals(OrganizationRoleType.PLATFORM_OPERATOR)) {
                 OrganizationAuthorityException ioa = new OrganizationAuthorityException(
@@ -1212,7 +1231,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     private void addMarketingPermissions(Organization organization)
             throws ObjectNotFoundException, AddMarketingPermissionException {
         // get granted roles
-        List<OrganizationRoleType> roleList = new ArrayList<OrganizationRoleType>();
+        List<OrganizationRoleType> roleList = new ArrayList<>();
         for (OrganizationToRole orgToRole : organization.getGrantedRoles()) {
             roleList.add(orgToRole.getOrganizationRole().getRoleName());
         }
@@ -1242,7 +1261,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
      */
     void addSelfReferenceAsCustomer(Organization organization)
             throws NonUniqueBusinessKeyException {
-        Set<OrganizationRoleType> sourceRoles = new HashSet<OrganizationRoleType>();
+        Set<OrganizationRoleType> sourceRoles = new HashSet<>();
         for (OrganizationToRole orgToRole : organization.getGrantedRoles()) {
             sourceRoles.add(orgToRole.getOrganizationRole().getRoleName());
         }
@@ -1541,7 +1560,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
 
         Organization seller = validateOrganizationDataForRegistration(
                 organization, user);
-        Organization customer = null;
+        Organization customer;
         try {
             customer = registerOrganization(
                     OrganizationAssembler.toCustomer(organization), null, user,
@@ -1656,7 +1675,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
      */
     private Organization validateOrganizationDataForRegistration(
             VOOrganization organization, VOUserDetails user)
-            throws ValidationException {
+            throws ValidationException, NonUniqueBusinessKeyException {
         Organization caller = dm.getCurrentUser().getOrganization();
         String id = organization.getOrganizationId();
         if (id != null && id.length() > 0) {
@@ -1671,7 +1690,43 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
                     "Organization");
             throw vf;
         }
+        if (checkIfPlatformUserInGivenTenantExists(organization.getTenantKey(),
+                user.getUserId())) {
+            throw new NonUniqueBusinessKeyException(
+                    DomainObjectException.ClassEnum.USER, user.getUserId());
+        }
         return caller;
+    }
+
+    // TODO: move it to tenant service as the operator service bean is also
+    // using the same code.
+    boolean checkIfPlatformUserInGivenTenantExists(long tenantKey, String userId) {
+        if (tenantKey != 0) {
+            Query query = dm
+                    .createNamedQuery("PlatformUser.findByUserIdAndTenantKey");
+            query.setParameter("userId", userId);
+            query.setParameter("tenantKey", tenantKey);
+            try {
+                PlatformUser pu = (PlatformUser) query.getSingleResult();
+                if (pu != null) {
+                    return true;
+                }
+            } catch (NoResultException e) {
+                // That is good. No user for that tenant exists.
+            }
+            return false;
+        }
+        Query query = dm.createNamedQuery("PlatformUser.findByUserId");
+        query.setParameter("userId", userId);
+        try {
+            PlatformUser pu = (PlatformUser) query.getSingleResult();
+            if (pu != null) {
+                return true;
+            }
+        } catch (NoResultException e) {
+            // That is good. No user for that tenant exists.
+        }
+        return false;
     }
 
     /**
@@ -1715,7 +1770,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
 
         final LocalizerFacade lf = new LocalizerFacade(localizer, dm
                 .getCurrentUser().getLocale());
-        Set<VOPaymentType> result = new HashSet<VOPaymentType>();
+        Set<VOPaymentType> result = new HashSet<>();
         for (OrganizationRefToPaymentType orgToPT : types) {
             result.add(PaymentTypeAssembler.toVOPaymentType(
                     orgToPT.getPaymentType(), lf));
@@ -1731,7 +1786,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
 
         List<PaymentType> ptIntersection = getAvailablePaymentTypesIntersection(serviceKey);
 
-        Set<VOPaymentType> result = new HashSet<VOPaymentType>();
+        Set<VOPaymentType> result = new HashSet<>();
         final LocalizerFacade lf = new LocalizerFacade(localizer, dm
                 .getCurrentUser().getLocale());
         for (PaymentType iter : ptIntersection) {
@@ -1790,7 +1845,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         List<ProductToPaymentType> ptProd = prod.getPaymentTypes();
 
         // build intersection (product and customer payment types)
-        List<PaymentType> ptIntersection = new ArrayList<PaymentType>();
+        List<PaymentType> ptIntersection = new ArrayList<>();
         for (OrganizationRefToPaymentType iterCust : types) {
             for (ProductToPaymentType iterProd : ptProd) {
                 if (iterCust.getPaymentType().equals(iterProd.getPaymentType())) {
@@ -1859,7 +1914,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         query.setParameter("referenceType", getCustomerReferenceType(seller));
         Iterable<Organization> customers = ParameterizedTypes.iterable(
                 query.getResultList(), Organization.class);
-        List<VOOrganizationPaymentConfiguration> result = new ArrayList<VOOrganizationPaymentConfiguration>();
+        List<VOOrganizationPaymentConfiguration> result = new ArrayList<>();
         final LocalizerFacade lf = new LocalizerFacade(localizer, dm
                 .getCurrentUser().getLocale());
 
@@ -2001,7 +2056,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         boolean result = true;
 
         try {
-            List<TriggerMessage> messages = new ArrayList<TriggerMessage>();
+            List<TriggerMessage> messages = new ArrayList<>();
 
             // collect messages for: customer default configuration
             if (filter
@@ -2011,7 +2066,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
                         TriggerProcessParameterName.DEFAULT_CONFIGURATION));
             }
             // collect messages for: customer configurations
-            Map<TriggerMessage, VOOrganizationPaymentConfiguration> ccmap = new HashMap<TriggerMessage, VOOrganizationPaymentConfiguration>();
+            Map<TriggerMessage, VOOrganizationPaymentConfiguration> ccmap = new HashMap<>();
             customerConfigurations = filter
                     .filterCustomerConfiguration(customerConfigurations);
             for (VOOrganizationPaymentConfiguration orgConf : customerConfigurations) {
@@ -2031,7 +2086,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
             }
 
             // collect messages for: service configuration
-            Map<TriggerMessage, VOServicePaymentConfiguration> scmap = new HashMap<TriggerMessage, VOServicePaymentConfiguration>();
+            Map<TriggerMessage, VOServicePaymentConfiguration> scmap = new HashMap<>();
             serviceConfigurations = filter
                     .filterServiceConfiguration(serviceConfigurations);
             for (VOServicePaymentConfiguration conf : serviceConfigurations) {
@@ -2129,7 +2184,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
             VOOrganizationPaymentConfiguration customerConfiguration = param
                     .getValue(VOOrganizationPaymentConfiguration.class);
 
-            Set<VOPaymentType> defaultConfiguration = new HashSet<VOPaymentType>();
+            Set<VOPaymentType> defaultConfiguration = new HashSet<>();
             final OrganizationRoleType roleType = supplier
                     .getVendorRoleForPaymentConfiguration();
             List<OrganizationRefToPaymentType> defaultPaymentTypes = supplier
@@ -2252,8 +2307,8 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
 
     private Map<PaymentType, List<Subscription>> loadPtToSubListMap(
             Product product, Map<String, PaymentType> idToPt) {
-        Map<PaymentType, List<Subscription>> ptToSubs = new HashMap<PaymentType, List<Subscription>>();
-        Set<PaymentType> ptSet = new HashSet<PaymentType>(idToPt.values());
+        Map<PaymentType, List<Subscription>> ptToSubs = new HashMap<>();
+        Set<PaymentType> ptSet = new HashSet<>(idToPt.values());
         for (ProductToPaymentType p : product.getPaymentTypes()) {
             ptSet.add(p.getPaymentType());
         }
@@ -2295,7 +2350,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
             return;
         }
 
-        List<Long> list = new ArrayList<Long>();
+        List<Long> list = new ArrayList<>();
         if (sessionCtx.getContextData().get(
                 SUSPENDED_SUBSCRIPTIONS_IN_TRANSACTION) instanceof List<?>
                 && ((List<?>) sessionCtx.getContextData().get(
@@ -2403,7 +2458,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     private Map<String, ProductToPaymentType> loadProductToPaymenttype(
             Product product) {
         List<ProductToPaymentType> existing = product.getPaymentTypes();
-        Map<String, ProductToPaymentType> idToRef = new HashMap<String, ProductToPaymentType>();
+        Map<String, ProductToPaymentType> idToRef = new HashMap<>();
         for (ProductToPaymentType ref : existing) {
             idToRef.put(ref.getPaymentType().getPaymentTypeId(), ref);
         }
@@ -2413,7 +2468,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     private Map<String, PaymentType> loadPaymentTypeForSupplier(
             Organization supplier) {
         // the payment types that are enabled for the supplier
-        Map<String, PaymentType> idToPt = new HashMap<String, PaymentType>();
+        Map<String, PaymentType> idToPt = new HashMap<>();
         final OrganizationRoleType role = supplier
                 .getVendorRoleForPaymentConfiguration();
         List<OrganizationRefToPaymentType> refs = supplier.getPaymentTypes(
@@ -2589,7 +2644,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         // updated
         final OrganizationRoleType role = supplier
                 .getVendorRoleForPaymentConfiguration();
-        Map<VOPaymentType, PaymentType> map = new HashMap<VOPaymentType, PaymentType>();
+        Map<VOPaymentType, PaymentType> map = new HashMap<>();
         List<OrganizationRefToPaymentType> types = supplier.getPaymentTypes(
                 false, role, OrganizationRoleType.PLATFORM_OPERATOR.name());
         final LocalizerFacade lf = new LocalizerFacade(localizer, dm
@@ -2629,7 +2684,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
      */
     private void suspendChargeableActiveSubscriptions(Organization customer,
             PaymentType paymentType, long sellerKey) {
-        List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+        List<PaymentInfo> paymentInfos = new ArrayList<>();
         for (PaymentInfo pi : customer.getPaymentInfos()) {
             if (pi.getPaymentType() == paymentType) {
                 paymentInfos.add(pi);
@@ -2772,7 +2827,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         } else {
             role = null;
         }
-        Set<VOPaymentType> result = new HashSet<VOPaymentType>();
+        Set<VOPaymentType> result = new HashSet<>();
         List<OrganizationRefToPaymentType> defaultPaymentTypes = supplier
                 .getPaymentTypes(true, role,
                         OrganizationRoleType.PLATFORM_OPERATOR.name());
@@ -3329,7 +3384,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     public Set<String> getUdaTargetTypes() {
 
         Organization organization = dm.getCurrentUser().getOrganization();
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         for (UdaTargetType type : UdaTargetType.values()) {
             if (orgHasUdaRoles(organization, type)) {
                 result.add(type.name());
@@ -3349,10 +3404,10 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         ArgumentValidator.notNull("udaDefinitionsToDelete",
                 udaDefinitionsToDelete);
         Organization org = dm.getCurrentUser().getOrganization();
-        UdaDefinitionAccess udaAccess = new UdaDefinitionAccess(dm, sessionCtx);
+        UdaDefinitionAccess udaAccess = new UdaDefinitionAccess(dm, sessionCtx,
+                localizer);
         udaAccess.saveUdaDefinitions(udaDefinitionsToSave, org);
         udaAccess.deleteUdaDefinitions(udaDefinitionsToDelete, org);
-
     }
 
     /**
@@ -3382,18 +3437,22 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         Organization organization = dm.getCurrentUser().getOrganization();
         List<UdaDefinition> defs = new UdaDefinitionAccess(dm, sessionCtx)
                 .getOwnUdaDefinitions(organization);
-        List<VOUdaDefinition> result = new ArrayList<VOUdaDefinition>();
+        List<VOUdaDefinition> result = new ArrayList<>();
         for (UdaDefinition def : defs) {
-            result.add(UdaAssembler.toVOUdaDefinition(def));
+            VOUdaDefinition voUdaDefinition = UdaAssembler.toVOUdaDefinition(
+                    def, new LocalizerFacade(localizer, dm.getCurrentUser()
+                            .getLocale()));
+            voUdaDefinition.setLanguage(dm.getCurrentUser().getLocale());
+            result.add(voUdaDefinition);
         }
-
         return result;
     }
 
     @Override
-    public List<VOUda> getUdas(String targetType, long targetObjectKey)
-            throws ValidationException, OrganizationAuthoritiesException,
-            ObjectNotFoundException, OperationNotPermittedException {
+    public List<VOUda> getUdas(String targetType, long targetObjectKey,
+            boolean checkSeller) throws ValidationException,
+            OrganizationAuthoritiesException, ObjectNotFoundException,
+            OperationNotPermittedException {
 
         ArgumentValidator.notNull("targetType", targetType);
         // get the current organization
@@ -3402,11 +3461,12 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         // initial UdaAccess
         UdaAccess udaAccess = new UdaAccess(dm, sessionCtx);
         List<Uda> udas = udaAccess.getUdasForTypeAndTarget(targetObjectKey,
-                type, organization);
-        List<VOUda> voUdas = new ArrayList<VOUda>();
+                type, organization, checkSeller);
+        List<VOUda> voUdas = new ArrayList<>();
         for (Uda uda : udas) {
             // convert to VO list
-            voUdas.add(UdaAssembler.toVOUda(uda));
+            voUdas.add(UdaAssembler.toVOUda(uda, new LocalizerFacade(localizer,
+                    dm.getCurrentUser().getLocale())));
         }
 
         return voUdas;
@@ -3426,7 +3486,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         long targetObjectKey = udas.get(0).getTargetObjectKey();
         String targetType = udas.get(0).getUdaDefinition().getTargetType();
         List<VOUda> originalUdas = getUdas(targetType, udas.get(0)
-                .getTargetObjectKey());
+                .getTargetObjectKey(), false);
         UdaAccess udaAccess = new UdaAccess(dm, sessionCtx);
         udaAccess.saveUdas(udas, dm.getCurrentUser().getOrganization());
         List<VOUda> updatedUdas = getUpdatedSubscriptionAttributes(
@@ -3709,7 +3769,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
     @RolesAllowed({ "SERVICE_MANAGER", "RESELLER_MANAGER" })
     public Set<VOPaymentType> getDefaultServicePaymentConfiguration() {
 
-        HashSet<VOPaymentType> result = new HashSet<VOPaymentType>();
+        HashSet<VOPaymentType> result = new HashSet<>();
         Organization supplier = dm.getCurrentUser().getOrganization();
         List<OrganizationRefToPaymentType> ref = supplier
                 .getDefaultServicePaymentTypes();
@@ -3743,7 +3803,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         List<Product> productList = ParameterizedTypes.list(
                 query.getResultList(), Product.class);
 
-        List<VOServicePaymentConfiguration> result = new ArrayList<VOServicePaymentConfiguration>();
+        List<VOServicePaymentConfiguration> result = new ArrayList<>();
 
         LocalizerFacade facade = new LocalizerFacade(localizer, dm
                 .getCurrentUser().getLocale());
@@ -3753,7 +3813,7 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
                     performanceHint);
             List<ProductToPaymentType> paymentTypes = prod.getPaymentTypes();
 
-            Set<VOPaymentType> set = new HashSet<VOPaymentType>();
+            Set<VOPaymentType> set = new HashSet<>();
             for (ProductToPaymentType prodToPt : paymentTypes) {
                 set.add(PaymentTypeAssembler.toVOPaymentType(
                         prodToPt.getPaymentType(), facade));
@@ -3799,10 +3859,12 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         List<UdaDefinition> defs = udaAccess
                 .getReadableUdaDefinitionsFromSupplier(supplier,
                         OrganizationRoleType.CUSTOMER);
-        List<VOUdaDefinition> voUdaDefs = new ArrayList<VOUdaDefinition>();
+        List<VOUdaDefinition> voUdaDefs = new ArrayList<>();
         for (UdaDefinition def : defs) {
             // convert to VO list
-            voUdaDefs.add(UdaAssembler.toVOUdaDefinition(def));
+            voUdaDefs.add(UdaAssembler.toVOUdaDefinition(def,
+                    new LocalizerFacade(localizer, dm.getCurrentUser()
+                            .getLocale())));
         }
 
         return voUdaDefs;
@@ -3860,10 +3922,11 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
         UdaAccess udaAccess = new UdaAccess(dm, sessionCtx);
         List<Uda> udas = udaAccess.getUdasForTypeTargetAndCustomer(
                 targetObjectKey, type, supplier, customer);
-        List<VOUda> voUdas = new ArrayList<VOUda>();
+        List<VOUda> voUdas = new ArrayList<>();
         for (Uda uda : udas) {
             // convert to VO list
-            voUdas.add(UdaAssembler.toVOUda(uda));
+            voUdas.add(UdaAssembler.toVOUda(uda, new LocalizerFacade(localizer,
+                    dm.getCurrentUser().getLocale())));
         }
 
         return voUdas;
@@ -3880,8 +3943,8 @@ public class AccountServiceBean implements AccountService, AccountServiceLocal {
 
     List<VOUda> getUpdatedSubscriptionAttributes(List<VOUda> existingUdas,
             List<VOUda> inputUdaList) {
-        Map<String, String> existingAttributesMap = new HashMap<String, String>();
-        List<VOUda> updatedList = new ArrayList<VOUda>();
+        Map<String, String> existingAttributesMap = new HashMap<>();
+        List<VOUda> updatedList = new ArrayList<>();
         for (VOUda voUda : existingUdas) {
             existingAttributesMap.put(voUda.getUdaDefinition().getUdaId(),
                     voUda.getUdaValue());

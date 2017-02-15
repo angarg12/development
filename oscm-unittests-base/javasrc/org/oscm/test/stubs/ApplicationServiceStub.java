@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.test.stubs;
@@ -134,6 +134,13 @@ public class ApplicationServiceStub implements ApplicationServiceLocal {
     @Override
     public Map<String, List<String>> getOperationParameterValues(String userId,
             TechnicalProductOperation operation, Subscription subscription)
+            throws TechnicalServiceNotAliveException,
+            TechnicalServiceOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void saveAttributes(Subscription subscription)
             throws TechnicalServiceNotAliveException,
             TechnicalServiceOperationException {
         throw new UnsupportedOperationException();

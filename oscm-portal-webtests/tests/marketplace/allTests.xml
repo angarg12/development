@@ -1,4 +1,4 @@
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 <!-- Entry point for test. Pay attention for order of tests. -->
 <project default="mpl_all">
   <target name="mpl_all">
@@ -44,5 +44,6 @@
      <ant antfile="./marketplace/testSubscriptionToUnit.xml" />
     <ant antfile="./marketplace/testPageAccess.xml" />
     <ant antfile="./marketplace/testAccessInfo.xml" />
+    <!--<ant antfile="./marketplace/testInterfaceExtensions.xml" />-->
   </target>
 </project>

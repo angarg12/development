@@ -1,4 +1,4 @@
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
                              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
@@ -147,8 +147,18 @@
             value="#{operatorOrgBean.newOrganization.description}" styleClass="field"
             maxlength="#{appBean.descriptionLen}" />
 
+          <adm:labelAndSelect id="tenant" label="#{msg['organization.tenant']}"
+                              value="#{operatorOrgBean.selectedTenant}"
+                              rendered="#{operatorOrgBean.tenantSelectionAvailable}"
+                              listenerBean="#{operatorOrgBean}" render="marketplace"
+                              oncomplete="AdmUtils.setUIElements();">
+            <adm:selectItemPleaseSelect itemValue="0" />
+            <f:selectItems value="#{operatorOrgBean.selectableTenants}" />
+            <f:validator validatorId="TenantValidator" />
+          </adm:labelAndSelect>
+
           <adm:labelAndSelect id="marketplace" label="#{msg['service.marketplace']}"
-            value="#{operatorOrgBean.selectedMarketplace}" required="#{isCustomerOrg}">
+                              value="#{operatorOrgBean.selectedMarketplace}" required="#{isCustomerOrg}">
             <adm:selectItemPleaseSelect itemValue="" />
             <f:selectItems value="#{operatorOrgBean.selectableMarketplaces}" />
           </adm:labelAndSelect>

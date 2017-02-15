@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: Jun 21, 2012                                                      
  *                                                                              
@@ -57,7 +57,8 @@ public class AccountServicePartnerOrgUdaTest {
         ds = mock(DataService.class);
         as = new AccountServiceBean() {
             @Override
-            public List<VOUda> getUdas(String targetType, long targetObjectKey)
+            public List<VOUda> getUdas(String targetType, long targetObjectKey,
+                    boolean checkSeller)
                     throws OrganizationAuthoritiesException {
                 throw (new OrganizationAuthoritiesException());
             }

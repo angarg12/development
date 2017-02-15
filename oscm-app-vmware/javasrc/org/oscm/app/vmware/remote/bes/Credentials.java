@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 2016-05-24
  *
@@ -8,7 +8,7 @@
 
 package org.oscm.app.vmware.remote.bes;
 
-import org.oscm.app.v1_0.data.PasswordAuthentication;
+import org.oscm.app.v2_0.data.PasswordAuthentication;
 
 /**
  * Object representing OSCM user credentials.
@@ -70,9 +70,9 @@ public class Credentials {
     }
 
     public PasswordAuthentication toPasswordAuthentication() {
-        PasswordAuthentication pa = (isSSO)
-                ? new PasswordAuthentication(userId, password)
-                : new PasswordAuthentication(Long.toString(userKey), password);
+        PasswordAuthentication pa = (isSSO) ? new PasswordAuthentication(
+                userId, password) : new PasswordAuthentication(
+                Long.toString(userKey), password);
         return pa;
     }
 

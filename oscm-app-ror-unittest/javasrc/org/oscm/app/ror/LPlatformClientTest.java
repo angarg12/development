@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017                                             
  *                                                                                                                                 
  *  Creation Date: Mar 5, 2014                                                      
  *                                                                              
@@ -26,7 +26,7 @@ import org.oscm.app.iaas.i18n.Messages;
 import org.oscm.app.ror.client.LPlatformClient;
 import org.oscm.app.ror.client.RORClient;
 import org.oscm.app.ror.data.LPlatformConfiguration;
-import org.oscm.app.v1_0.exceptions.SuspendException;
+import org.oscm.app.v2_0.exceptions.SuspendException;
 
 /**
  * @author zhaohang

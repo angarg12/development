@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: schmid                                 
  *                                                                              
@@ -81,14 +81,12 @@ import org.oscm.internal.types.enumtypes.ServiceType;
                 @TokenFilterDef(factory = WordDelimiterFilterFactory.class, params = {
                         @Parameter(name = "preserveOriginal", value = "1"),
                         @Parameter(name = "catenateAll", value = "1") }),
-                @TokenFilterDef(factory = LowerCaseFilterFactory.class),
-                @TokenFilterDef(factory = SnowballPorterFilterFactory.class) }),
+                @TokenFilterDef(factory = LowerCaseFilterFactory.class)}),
         @AnalyzerDef(name = "de", tokenizer = @TokenizerDef(factory = WhitespaceTokenizerFactory.class), filters = {
                 @TokenFilterDef(factory = WordDelimiterFilterFactory.class, params = {
                         @Parameter(name = "preserveOriginal", value = "1"),
                         @Parameter(name = "catenateAll", value = "1") }),
-                @TokenFilterDef(factory = LowerCaseFilterFactory.class),
-                @TokenFilterDef(factory = GermanStemFilterFactory.class) }), })
+                @TokenFilterDef(factory = LowerCaseFilterFactory.class)}), })
 @AnalyzerDiscriminator(impl = ProductClassBridge.class)
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "productId",
         "vendorKey" }))
@@ -152,7 +150,8 @@ public class Product extends DomainObjectWithHistory<ProductData> {
             .unmodifiableList(Arrays.asList(
                     LocalizedObjectTypes.PRODUCT_MARKETING_DESC,
                     LocalizedObjectTypes.PRODUCT_MARKETING_NAME,
-                    LocalizedObjectTypes.PRODUCT_SHORT_DESCRIPTION));
+                    LocalizedObjectTypes.PRODUCT_SHORT_DESCRIPTION,
+                    LocalizedObjectTypes.PRODUCT_CUSTOM_TAB_NAME));
 
     private static final transient Log4jLogger logger = LoggerFactory
             .getLogger(Product.class);
@@ -410,6 +409,14 @@ public class Product extends DomainObjectWithHistory<ProductData> {
         dataContainer.setConfiguratorUrl(configuratorUrl);
     }
 
+    public String getCustomTabUrl() {
+        return dataContainer.getCustomTabUrl();
+    }
+
+    public void setCustomTabUrl(String customTabUrl) {
+        dataContainer.setCustomTabUrl(customTabUrl);
+    }
+
     public List<Product> getCompatibleProductsList() {
         Product templ = getType() == ServiceType.PARTNER_TEMPLATE ? null
                 : getTemplate();
@@ -660,6 +667,7 @@ public class Product extends DomainObjectWithHistory<ProductData> {
         } else {
             copy.setConfiguratorUrl(null);
         }
+        copy.setCustomTabUrl(this.getCustomTabUrl());
 
     }
 
@@ -699,6 +707,7 @@ public class Product extends DomainObjectWithHistory<ProductData> {
         copy.setPriceModel(null);
         copy.setParameterSet(null);
         copy.setConfiguratorUrl(null);
+        copy.setCustomTabUrl(null);
 
         setDatacontainerValues(copy, ServiceType.PARTNER_TEMPLATE);
         copy.setAutoAssignUserEnabled(null);

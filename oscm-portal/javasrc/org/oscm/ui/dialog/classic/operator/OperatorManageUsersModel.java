@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: afschar                                                   
  *                                                                              
@@ -18,9 +18,9 @@ import javax.faces.bean.SessionScoped;
 
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
+import org.oscm.internal.vo.VOUser;
 import org.oscm.ui.beans.BaseModel;
 import org.oscm.ui.model.Marketplace;
-import org.oscm.internal.vo.VOUser;
 
 /**
  * Bean for operator functionality for locking and unlocking a user account and

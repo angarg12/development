@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 2016-05-24
  *
@@ -19,8 +19,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.oscm.app.v1_0.data.InstanceStatus;
-import org.oscm.app.v1_0.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.InstanceStatus;
+import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.vmware.business.statemachine.api.StateMachineAction;
 
 /**

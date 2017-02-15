@@ -1,4 +1,4 @@
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 <!DOCTYPE project SYSTEM "../../dtd/Project.dtd">
 <project default="testFeedbackRating" xmlns:setup="antlib:org.oscm.webtest.setup">
   <import file="../../macros/marketplace/all.xml" />
@@ -276,8 +276,8 @@
       <!-- the email of the platform operator is not set, but is reqired for a subscription -->
       <mpl_goto.marketplace mid="${mId}" />
       <mpl_goto.account.profile />
-      <setInputField htmlId="editForm:email" value="${common.email}" />
-      <setSelectField name="editForm:country" value="DE" />
+      <mpl_goto.tab label="${marketplace.account.profile.userTab}" />
+      <setInputField htmlId="userForm:email" value="${common.email}" />
       <clickButton label="${button.save}" />
 
       <!-- Subscribe as platform operator to a service -->

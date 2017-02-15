@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: pock                                                      
  *                                                                              
@@ -163,4 +163,5 @@ public class MarketplaceData extends DomainDataContainer implements
     public void setRestricted(boolean restricted) {
         this.restricted = restricted;
     }
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.ui.model;
@@ -364,6 +364,40 @@ public class ServiceDetails {
      */
     public void setShortDescription(String description) {
         voDetails.setShortDescription(description);
+    }
+
+
+    /**
+     *
+     * @return the name of the custom tab of the service
+     */
+    public String getCustomTabName() {
+        return voDetails.getCustomTabName();
+    }
+
+    /**
+     * Sets the name of the custom tab of the service
+     * @param customTabName
+     */
+    public void setCustomTabName(String customTabName) {
+        voDetails.setCustomTabName(customTabName);
+    }
+
+    /**
+     *
+     * @return URL of the custom tab of the service
+     */
+    public String getCustomTabUrl() {
+        return voDetails.getCustomTabUrl();
+    }
+
+    /**
+     * Sets the URL of the custom tab of the service
+     *
+     * @param customTabUrl
+     */
+    public void setCustomTabUrl(String customTabUrl) {
+        voDetails.setCustomTabUrl(customTabUrl);
     }
 
     public boolean isReseller() {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
  
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
@@ -11,7 +11,9 @@
     <jta-data-source>BSSAppDS</jta-data-source>
     <class>org.oscm.app.domain.ServiceInstance</class>
     <class>org.oscm.app.domain.ConfigurationSetting</class>
+    <class>org.oscm.app.domain.CustomAttribute</class>
     <class>org.oscm.app.domain.InstanceParameter</class>
+    <class>org.oscm.app.domain.InstanceAttribute</class>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="validate" />
       <property name="hibernate.jdbc.batch_size" value="0" />

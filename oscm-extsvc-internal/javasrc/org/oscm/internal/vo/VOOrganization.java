@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2009-09-17                                                      
  *                                                                              
@@ -95,6 +95,8 @@ public class VOOrganization extends BaseVO {
     private boolean hasSubscriptions;
 
     private boolean hasPublishedServices;
+
+    private long tenantKey;
 
     /**
      * Retrieves the identifier of the organization.
@@ -414,5 +416,13 @@ public class VOOrganization extends BaseVO {
 
     public void setHasPublishedServices(boolean hasPublishedServices) {
         this.hasPublishedServices = hasPublishedServices;
+    }
+
+    public long getTenantKey() {
+        return tenantKey;
+    }
+
+    public void setTenantKey(long tenantKey) {
+        this.tenantKey = tenantKey;
     }
 }

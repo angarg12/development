@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 24.05.2013                                                      
  *                                                                              
@@ -88,9 +88,9 @@ public class AssertionValidationException extends SaaSApplicationException {
      * {@link AssertionValidationException}.
      * 
      */
-    public static enum ReasonEnum {
+    public enum ReasonEnum {
 
-        INVALID_RECIPIENT, ASSERTION_EXPIRED, EXCEPTION_OCCURRED, WRONG_REQUEST;
+        INVALID_RECIPIENT, ASSERTION_EXPIRED, EXCEPTION_OCCURRED, WRONG_REQUEST, WRONG_TENANT, MISSING_TENANT
     }
 
 }

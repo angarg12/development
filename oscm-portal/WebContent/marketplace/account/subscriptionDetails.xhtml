@@ -1,4 +1,4 @@
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
@@ -267,14 +267,6 @@
                   <ui:param name="inputList" value="#{manageSubscriptionModel.subscriptionUdaRows}" />
                   <ui:param name="udasReadOnly" value="#{manageSubscriptionModel.cfgTabDisabled}" />
                 </ui:include>
-
-                <!-- add UDA details for organization-->
-                <ui:fragment rendered="#{not empty manageSubscriptionModel.organizationUdaRows}">
-                  <ui:include src="organizationUdaDetails.xhtml">
-                    <ui:param name="inputList" value="#{manageSubscriptionModel.organizationUdaRows}" />
-                    <ui:param name="readOnly" value="#{manageSubscriptionModel.cfgTabDisabled}" />
-                  </ui:include>
-                </ui:fragment>
               </a4j:outputPanel>
 
               <ui:fragment rendered="#{manageSubscriptionModel.useExternalConfigurator}">

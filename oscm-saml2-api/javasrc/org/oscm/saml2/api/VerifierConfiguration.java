@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 28.05.2013                                                      
  *                                                                              
@@ -16,17 +16,19 @@ import java.util.Calendar;
  */
 class VerifierConfiguration {
 
+    private final String tenantID;
     private String requestId;
     private String acsUrl;
     private String acsUrlHttps;
     private Calendar referenceTime;
 
     public VerifierConfiguration(String requestId, String acsUrl,
-            String acsUrlHttps, Calendar referenceTime) {
+                                 String acsUrlHttps, Calendar referenceTime, String tenantID) {
         this.requestId = requestId;
         this.acsUrl = acsUrl;
         this.acsUrlHttps = acsUrlHttps;
         this.referenceTime = referenceTime;
+        this.tenantID = tenantID;
     }
 
     public String getRequestId() {
@@ -45,4 +47,7 @@ class VerifierConfiguration {
         return referenceTime;
     }
 
+    public String getTenantID() {
+        return tenantID;
+    }
 }

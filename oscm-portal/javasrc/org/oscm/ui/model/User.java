@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Creation Date: 18.02.2009                                                      
  *                                                                              
@@ -108,6 +108,9 @@ public class User implements Serializable {
 
     public String getOrganizationId() {
         return voUserDetails.getOrganizationId();
+    }
+    public String getOrganizationName() {
+        return voUserDetails.getOrganizationName();
     }
 
     public String getPhone() {
@@ -388,4 +391,12 @@ public class User implements Serializable {
         this.groupsToDisplay = groupsToDisplay;
     }
 
+    public long getTenantKey() {
+        try {
+            return Long.parseLong(voUserDetails.getTenantKey());
+        } catch(Exception exc) {
+            //Do nothing. Current user is in default tenant.
+            return 0;
+        }
+    }
 }

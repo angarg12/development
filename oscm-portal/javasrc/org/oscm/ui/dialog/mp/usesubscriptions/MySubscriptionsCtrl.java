@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 14.03.2013                                                     
  *                                                                              
@@ -8,46 +8,73 @@
 
 package org.oscm.ui.dialog.mp.usesubscriptions;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
+import javax.ws.rs.core.UriBuilder;
 
-import org.oscm.string.Strings;
-import org.oscm.ui.beans.ApplicationBean;
-import org.oscm.ui.beans.BaseBean;
-import org.oscm.ui.common.JSFUtils;
-import org.oscm.ui.common.UiDelegate;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
+import org.oscm.internal.intf.ConfigurationService;
 import org.oscm.internal.intf.SubscriptionService;
 import org.oscm.internal.subscriptions.OperationModel;
 import org.oscm.internal.subscriptions.OperationParameterModel;
 import org.oscm.internal.subscriptions.POSubscription;
 import org.oscm.internal.subscriptions.SubscriptionsService;
 import org.oscm.internal.triggerprocess.TriggerProcessesService;
+import org.oscm.internal.types.enumtypes.ConfigurationKey;
 import org.oscm.internal.types.exception.ConcurrentModificationException;
 import org.oscm.internal.types.exception.SaaSApplicationException;
+import org.oscm.internal.vo.VOConfigurationSetting;
 import org.oscm.internal.vo.VOServiceOperationParameter;
 import org.oscm.internal.vo.VOServiceOperationParameterValues;
 import org.oscm.internal.vo.VOSubscription;
 import org.oscm.internal.vo.VOTechnicalServiceOperation;
+import org.oscm.string.Strings;
+import org.oscm.types.constants.Configuration;
+import org.oscm.ui.beans.ApplicationBean;
+import org.oscm.ui.beans.BaseBean;
+import org.oscm.ui.common.JSFUtils;
+import org.oscm.ui.common.UiDelegate;
 
 @ManagedBean
 @ViewScoped
 public class MySubscriptionsCtrl implements Serializable {
 
     private static final long serialVersionUID = -9209968842729517052L;
+
+    private static final Logger LOGGER = Logger
+            .getLogger(MySubscriptionsCtrl.class);
+
     @ManagedProperty(value = "#{mySubscriptionsLazyDataModel}")
     private MySubscriptionsLazyDataModel model;
-    
+
     @ManagedProperty(value = "#{appBean}")
     ApplicationBean applicationBean;
 
@@ -79,25 +106,30 @@ public class MySubscriptionsCtrl implements Serializable {
     @EJB
     TriggerProcessesService triggerProcessService;
 
+    @EJB
+    ConfigurationService config;
+
     @PostConstruct
-    public void initialize(){
-    	initializeTriggerSubscriptions();
-    	checkSelectedSubscription();
+    public void initialize() {
+        initializeTriggerSubscriptions();
+        checkSelectedSubscription();
     }
 
     public void initializeTriggerSubscriptions() {
-    	myTriggerProcessesModel.setWaitingForApprovalSubs(triggerProcessService
-                .getMyWaitingForApprovalSubscriptions().getResultList(
-                        POSubscription.class));
+        myTriggerProcessesModel.setWaitingForApprovalSubs(
+                triggerProcessService.getMyWaitingForApprovalSubscriptions()
+                        .getResultList(POSubscription.class));
     }
 
     @EJB
-    public void setSubscriptionsService(SubscriptionsService subscriptionsService) {
+    public void setSubscriptionsService(
+            SubscriptionsService subscriptionsService) {
         this.subscriptionsService = subscriptionsService;
     }
 
     @EJB
-    public void setSubscriptionService(SubscriptionService subscriptionService) {
+    public void setSubscriptionService(
+            SubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
     }
 
@@ -122,13 +154,15 @@ public class MySubscriptionsCtrl implements Serializable {
             return;
         }
         OperationModel selectedOperation = sub.getSelectedOperation();
-        if (selectedOperation == null || selectedOperation.getOperation() == null) {
+        if (selectedOperation == null
+                || selectedOperation.getOperation() == null) {
             return;
         }
-        VOTechnicalServiceOperation operation = selectedOperation.getOperation();
+        VOTechnicalServiceOperation operation = selectedOperation
+                .getOperation();
         try {
-            subscriptionService.executeServiceOperation(
-                    sub.getVOSubscription(), operation);
+            subscriptionService.executeServiceOperation(sub.getVOSubscription(),
+                    operation);
         } catch (ConcurrentModificationException e) {
             ui.handleError(null, ERROR_SUBSCRIPTION_CONCURRENTMODIFY);
             return;
@@ -162,8 +196,8 @@ public class MySubscriptionsCtrl implements Serializable {
             operationModel.setOperation(op);
 
             try {
-                operationModel.setParameters(convert(op,
-                        subscription.getVOSubscription()));
+                operationModel.setParameters(
+                        convert(op, subscription.getVOSubscription()));
             } catch (SaaSApplicationException e) {
                 subscription.setExecuteDisabled(true);
                 ui.handleException(e);
@@ -224,21 +258,21 @@ public class MySubscriptionsCtrl implements Serializable {
         this.selectId = selectId;
     }
 
-	public MyTriggerProcessesModel getMyTriggerProcessesModel() {
-		return myTriggerProcessesModel;
-	}
+    public MyTriggerProcessesModel getMyTriggerProcessesModel() {
+        return myTriggerProcessesModel;
+    }
 
-	public void setMyTriggerProcessesModel(MyTriggerProcessesModel myTriggerProcessesModel) {
-		this.myTriggerProcessesModel = myTriggerProcessesModel;
-	}
+    public void setMyTriggerProcessesModel(
+            MyTriggerProcessesModel myTriggerProcessesModel) {
+        this.myTriggerProcessesModel = myTriggerProcessesModel;
+    }
 
     public void validateSubscriptionStatus() {
         String subKey = model.getSelectedSubscriptionId();
-        POSubscription mySubscriptionDetails = subscriptionsService.getMySubscriptionDetails(Long.parseLong(subKey));
+        POSubscription mySubscriptionDetails = subscriptionsService
+                .getMySubscriptionDetails(Long.parseLong(subKey));
         if (mySubscriptionDetails == null) {
-            JSFUtils.addMessage(
-                    null,
-                    FacesMessage.SEVERITY_ERROR,
+            JSFUtils.addMessage(null, FacesMessage.SEVERITY_ERROR,
                     BaseBean.ERROR_SUBSCRIPTION_MODIFIED_OR_DELETED_CONCURRENTLY,
                     null);
             model.setSelectedSubscription(null);
@@ -247,15 +281,118 @@ public class MySubscriptionsCtrl implements Serializable {
             model.setSelectedSubscription(mySubscriptionDetails);
         }
     }
-    
+
     public void checkSelectedSubscription() {
         String subKey = model.getSelectedSubscriptionId();
-        if(subKey!=null){
-            POSubscription mySubscriptionDetails = subscriptionsService.getMySubscriptionDetails(Long.parseLong(subKey));
+        if (subKey != null) {
+            POSubscription mySubscriptionDetails = subscriptionsService
+                    .getMySubscriptionDetails(Long.parseLong(subKey));
             if (mySubscriptionDetails == null) {
                 model.setSelectedSubscription(null);
                 model.setSelectedSubscriptionId(null);
             }
         }
+    }
+
+    public String getCustomTabUrlWithParameters() {
+
+        // load and encode parameters
+        String orgId = encodeBase64(
+                model.getSelectedSubscription().getOrganizationId());
+        String subId = encodeBase64(
+                model.getSelectedSubscription().getSubscriptionId());
+        String instId = encodeBase64(
+                model.getSelectedSubscription().getServiceInstanceId());
+        String timestamp = Long.toString(System.currentTimeMillis());
+
+        // build token string
+        String token = instId + subId + orgId + timestamp;
+
+        // load config settings for keystore
+        VOConfigurationSetting settingLoc = config.getVOConfigurationSetting(
+                ConfigurationKey.SSO_SIGNING_KEYSTORE,
+                Configuration.GLOBAL_CONTEXT);
+
+        VOConfigurationSetting settingPwd = config.getVOConfigurationSetting(
+                ConfigurationKey.SSO_SIGNING_KEYSTORE_PASS,
+                Configuration.GLOBAL_CONTEXT);
+
+        VOConfigurationSetting settingAlias = config.getVOConfigurationSetting(
+                ConfigurationKey.SSO_SIGNING_KEY_ALIAS,
+                Configuration.GLOBAL_CONTEXT);
+
+        if (settingLoc == null || settingPwd == null || settingAlias == null) {
+            LOGGER.error("Missing configuration settings for token creation");
+            return "";
+        }
+
+        String loc = settingLoc.getValue();
+        String pwd = settingPwd.getValue();
+        String alias = settingAlias.getValue();
+
+        InputStream is = null;
+        try {
+
+            // create token hash
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(token.getBytes(StandardCharsets.UTF_8));
+            byte[] tokenHash = md.digest();
+
+            // load keystore from file
+            is = new FileInputStream(loc);
+            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keystore.load(is, pwd.toCharArray());
+
+            // get private key for alias
+            Key key = keystore.getKey(alias, pwd.toCharArray());
+
+            if (key == null) {
+                LOGGER.error("Unable to retrieve private key from keystore");
+                return "";
+            }
+
+            // encrypt and encode token hash
+            Cipher c = Cipher.getInstance(key.getAlgorithm());
+            c.init(Cipher.ENCRYPT_MODE, key);
+
+            String tokenSignature = encodeBase64(c.doFinal(tokenHash));
+
+            // build URI
+            UriBuilder builder = UriBuilder.fromPath(
+                    model.getSelectedSubscription().getCustomTabUrl());
+            builder.queryParam("instId", instId);
+            builder.queryParam("orgId", orgId);
+            builder.queryParam("subId", subId);
+            builder.queryParam("timestamp", timestamp);
+            builder.queryParam("signature", tokenSignature);
+
+            return builder.build().toString();
+
+        } catch (KeyStoreException | CertificateException | IOException
+                | UnrecoverableKeyException | NoSuchPaddingException
+                | InvalidKeyException | IllegalBlockSizeException
+                | BadPaddingException | NoSuchAlgorithmException e) {
+
+            LOGGER.error("Unable to build custom tab URI", e);
+            return "";
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+    }
+
+    private String encodeBase64(String str) {
+        return Base64.encodeBase64URLSafeString(
+                str.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String encodeBase64(byte[] b) {
+        return Base64.encodeBase64URLSafeString(b);
     }
 }

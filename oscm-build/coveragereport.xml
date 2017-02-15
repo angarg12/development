@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
  
 <project name="Coverage Report Script" basedir="." default="createreport" xmlns:jacoco="antlib:org.jacoco.ant">
 
@@ -164,15 +164,6 @@
           </classfiles>
           <sourcefiles encoding="utf-8">
             <fileset dir="${workspace.dir}/oscm-configservice-intsvc/javasrc" />
-          </sourcefiles>
-        </group>
-
-        <group name="oscm-credentialservice">
-          <classfiles>
-            <fileset dir="${result.dir}/work/oscm-credentialservice/classes" />
-          </classfiles>
-          <sourcefiles encoding="utf-8">
-            <fileset dir="${workspace.dir}/oscm-credentialservice/javasrc" />
           </sourcefiles>
         </group>
 
@@ -410,15 +401,6 @@
           </sourcefiles>
         </group>
 
-        <group name="oscm-saml-api">
-          <classfiles>
-            <fileset dir="${result.dir}/work/oscm-saml-api/classes" />
-          </classfiles>
-          <sourcefiles encoding="utf-8">
-            <fileset dir="${workspace.dir}/oscm-saml-api/javasrc" />
-          </sourcefiles>
-        </group>
-
         <group name="oscm-sessionmgmt">
           <classfiles>
             <fileset dir="${result.dir}/work/oscm-sessionmgmt/classes" />
@@ -595,6 +577,22 @@
           </classfiles>
           <sourcefiles encoding="utf-8">
             <fileset dir="${workspace.dir}/oscm-rest-api-trigger/javasrc" />
+          </sourcefiles>
+        </group>
+        <group name="oscm-tenantmgmt">
+          <classfiles>
+            <fileset dir="${result.dir}/work/oscm-tenantmgmt/classes" />
+          </classfiles>
+          <sourcefiles encoding="utf-8">
+            <fileset dir="${workspace.dir}/oscm-tenantmgmt/javasrc" />
+          </sourcefiles>
+        </group>
+        <group name="oscm-tenantmgmt-intsvc">
+          <classfiles>
+            <fileset dir="${result.dir}/work/oscm-tenantmgmt-intsvc/classes" />
+          </classfiles>
+          <sourcefiles encoding="utf-8">
+            <fileset dir="${workspace.dir}/oscm-tenantmgmt-intsvc/javasrc" />
           </sourcefiles>
         </group>
 

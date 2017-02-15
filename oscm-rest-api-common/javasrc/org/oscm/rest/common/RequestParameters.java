@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                           
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: May 9, 2016                                                      
  *                                                                              
@@ -66,6 +66,13 @@ public abstract class RequestParameters {
 
     public Long getETag() {
         return etag;
+    }
+
+    public int eTagToVersion() {
+        if (etag == null) {
+            return 0;
+        }
+        return etag.intValue();
     }
 
     public void setETag(Long etag) {

@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                        
+ *  Copyright FUJITSU LIMITED 2017
  *       
  *  Creation Date: 2009-09-09                                                      
  *                                                                              
@@ -261,6 +261,16 @@ public class VOParameterDefinition extends BaseVO {
      */
     public boolean isValueTypeDuration() {
         return valueType == ParameterValueType.DURATION;
+    }
+
+    /**
+     * Checks if the parameter data type is <code>PWD</code>.
+     *
+     * @return <code>true</code> if the data type of the parameter is
+     *         <code>PWD</code>, <code>false</code> otherwise.
+     */
+    public boolean isValueTypePWD() {
+        return valueType == ParameterValueType.PWD;
     }
 
     /**

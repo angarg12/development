@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: 12.02.2014                                                      
  *                                                                              
@@ -250,6 +250,7 @@ public class BssClient {
                 + wsProxyInfo.getServiceVersion() + "</br>");
         out.println("User: " + wsProxyInfo.getUserCredentials().getUser()
                 + "</br>");
-        out.println("Password: ****</br></br></br>");
+        out.println("Password: ****</br>");
+        out.println("Tenant ID: ****</br></br></br>");
     }
 }

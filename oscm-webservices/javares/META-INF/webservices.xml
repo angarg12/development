@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
  
 <webservices xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   version="1.2" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://www.ibm.com/webservices/xsd/javaee_web_services_1_2.xsd">
@@ -691,46 +691,6 @@
       <service-endpoint-interface>org.oscm.intf.CategorizationService</service-endpoint-interface>
       <service-impl-bean>
         <ejb-link>CategorizationServiceWS2</ejb-link>
-      </service-impl-bean>
-      <handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
-        <handler-chain>
-          <handler>
-            <handler-name>org.oscm.webservices.handler.SupportedVersionHandler</handler-name>
-            <handler-class>org.oscm.webservices.handler.SupportedVersionHandler</handler-class>
-          </handler>                    
-        </handler-chain>
-      </handler-chains>            
-    </port-component>
-  </webservice-description>
-
-  <!-- === SamlService ==================================================== -->
-  <webservice-description>
-    <display-name>SamlService</display-name>
-    <webservice-description-name>SamlService</webservice-description-name>
-    <port-component>
-      <port-component-name>SamlServicePortBASIC</port-component-name>
-      <wsdl-service xmlns:ns1="http://oscm.org/xsd">ns1:SamlService</wsdl-service>
-      <wsdl-port xmlns:ns1="http://oscm.org/xsd">ns1:SamlServicePortBASIC</wsdl-port>
-      <service-endpoint-interface>org.oscm.intf.SamlService</service-endpoint-interface>
-      <service-impl-bean>
-        <ejb-link>SamlServiceWS1</ejb-link>
-      </service-impl-bean>
-      <handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
-        <handler-chain>
-          <handler>
-            <handler-name>org.oscm.webservices.handler.SupportedVersionHandler</handler-name>
-            <handler-class>org.oscm.webservices.handler.SupportedVersionHandler</handler-class>
-          </handler>                    
-        </handler-chain>
-      </handler-chains>            
-    </port-component>
-    <port-component>
-      <port-component-name>SamlServicePortCLIENTCERT</port-component-name>
-      <wsdl-service xmlns:ns1="http://oscm.org/xsd">ns1:SamlService</wsdl-service>
-      <wsdl-port xmlns:ns1="http://oscm.org/xsd">ns1:SamlServicePortCLIENTCERT</wsdl-port>
-      <service-endpoint-interface>org.oscm.intf.SamlService</service-endpoint-interface>
-      <service-impl-bean>
-        <ejb-link>SamlServiceWS2</ejb-link>
       </service-impl-bean>
       <handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
         <handler-chain>

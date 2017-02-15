@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016                            
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: Mar 14, 2012
  *
@@ -87,6 +87,7 @@ public class UpdateMarketplaceBean extends BaseBean {
         vmp.setReviewEnabled(mp.isReviewEnabled());
         vmp.setSocialBookmarkEnabled(mp.isSocialBookmarkEnabled());
         vmp.setCategoriesEnabled(mp.isCategoriesEnabled());
+        vmp.setTenantId(mp.getTenantId());
         return vmp;
     }
 
@@ -267,8 +268,11 @@ public class UpdateMarketplaceBean extends BaseBean {
         mp.setVersion(vmp.getVersion());
         mp.setEditDisabled(false);
         mp.setOrganizationSelectVisible(isLoggedInAndPlatformOperator());
+        mp.setTenantSelectVisible(isLoggedInAndPlatformOperator()
+                && !menuBean.getApplicationBean().isInternalAuthMode());
         mp.setPropertiesDisabled(!isMpOwner(vmp));
         mp.setRevenueSharesReadOnly(!isLoggedInAndPlatformOperator());
+        mp.setTenantId(vmp.getTenantId());
         return mp;
     }
 

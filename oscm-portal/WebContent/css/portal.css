@@ -1,5 +1,5 @@
 /* 
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  * Normalize and disable default scrollbars */
 /*@import url("oscm1.css");*/
  
@@ -2251,4 +2251,13 @@ form .formHighlight div.div-for-input {
 #manageAccessForm tr.formHighlight input[type="password"],
 #manageAccessForm tr.formHighlight textarea, #manageAccessForm .formHighlight select {
     border-color:  transparent !important;
+}
+
+.button-in-header img.buttonImg.add {
+    width: 18px;
+    height: 14px;
+}
+
+#manageTenants th.rf-dt-hdr-c {
+  padding-left: 0;
 }

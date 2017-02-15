@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 2016-05-24
  *
@@ -65,6 +65,10 @@ public class VMwareStorage {
 
     public double getCapacity() {
         return capacity;
+    }
+
+    public double getFree() {
+        return free;
     }
 
     public String getName() {
