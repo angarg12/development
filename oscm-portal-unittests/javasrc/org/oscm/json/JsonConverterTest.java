@@ -63,6 +63,7 @@ public class JsonConverterTest {
     private static final String PARAM_VALUE_ESC = "paramValue\\\\f";;
     private static final Long PARAM_MIN = Long.valueOf(100L);
     private static final Long PARAM_MAX = Long.valueOf(200L);
+    private static final Double PARAM_NO_PRICE = Double.valueOf(0.0);
     private static final ParameterModificationType PARAM_MODTYPE = ParameterModificationType.STANDARD;
     private static final ParameterModificationType PARAM_MODTYPE_ONE_TIME = ParameterModificationType.ONE_TIME;
     private static final boolean PARAM_MANDATORY = true;
@@ -77,7 +78,9 @@ public class JsonConverterTest {
     private static final ResponseCode RESPONSE_CODE = ResponseCode.CONFIGURATION_CANCELLED;
 
     private static final String PARAM_OPT_OBJ = "{\"id\":\"" + PARAM_OPT_ID
-            + "\",\"description\":\"" + PARAM_OPT_DESC_ESC + "\"}";
+            + "\",\"description\":\"" + PARAM_OPT_DESC_ESC + "\""
+            + ",\"pricePerUser\":" + PARAM_NO_PRICE +",\"pricePerSubscription\":"
+            + PARAM_NO_PRICE + "}";
 
     private static final String PARAM_OBJ_NO_OPT = "{\"id\":\"" + PARAM_ID
             + "\",\"valueType\":\"" + PARAM_VALUETYPE + "\",\"minValue\":\""
@@ -85,7 +88,9 @@ public class JsonConverterTest {
             + "\",\"mandatory\":" + PARAM_MANDATORY + ",\"description\":\""
             + PARAM_DESC_ESC + "\",\"value\":\"" + PARAM_VALUE_ESC
             + "\",\"readonly\":" + PARAM_READONLY + ",\"modificationType\":\""
-            + PARAM_MODTYPE + "\",\"valueError\":" + PARAM_VAL_ERROR + "}";
+            + PARAM_MODTYPE + "\",\"valueError\":" + PARAM_VAL_ERROR
+            + ",\"pricePerUser\":" + PARAM_NO_PRICE +",\"pricePerSubscription\":"
+            + PARAM_NO_PRICE + "}";
 
     private static final String PARAM_OBJ_NO_OPT_ONETIME = PARAM_OBJ_NO_OPT
             .replace("\"readonly\":false", "\"readonly\":true").replace(
@@ -99,6 +104,8 @@ public class JsonConverterTest {
             + PARAM_DESC_ESC + "\",\"value\":\"" + PARAM_VALUE_ESC
             + "\",\"readonly\":" + PARAM_READONLY + ",\"modificationType\":\""
             + PARAM_MODTYPE + "\",\"valueError\":" + PARAM_VAL_ERROR
+            + ",\"pricePerUser\":" + PARAM_NO_PRICE +",\"pricePerSubscription\":"
+            + PARAM_NO_PRICE
             + ",\"options\":[" + PARAM_OPT_OBJ + "," + PARAM_OPT_OBJ + "]}";
 
     private static final String PARAM_DURATION = "{\"id\":\"" + PARAM_ID
@@ -108,7 +115,9 @@ public class JsonConverterTest {
             + PARAM_MANDATORY + ",\"description\":\"" + PARAM_DESC_ESC
             + "\",\"value\":\"" + PARAM_DURATION_EXPECTED_VALUE
             + "\",\"readonly\":" + PARAM_READONLY + ",\"modificationType\":\""
-            + PARAM_MODTYPE + "\",\"valueError\":" + PARAM_VAL_ERROR + "}";
+            + PARAM_MODTYPE + "\",\"valueError\":" + PARAM_VAL_ERROR
+            + ",\"pricePerUser\":" + PARAM_NO_PRICE +",\"pricePerSubscription\":"
+            + PARAM_NO_PRICE + "}";
 
     private static final String PARAM_OBJ_WITH_OPT_ONETIME = PARAM_OBJ_WITH_OPT
             .replace("\"readonly\":false", "\"readonly\":true").replace(
